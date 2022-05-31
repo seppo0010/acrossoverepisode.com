@@ -1,0 +1,45 @@
+#searchTitle {
+  display: flex;
+  width: 100%;
+}
+
+#searchTitle h1 {
+  flex-grow: 1;
+}
+
+#searchTitle label {
+  display: flex;
+  align-items: center;
+}
+
+button {
+  border: none;
+  padding: 0;
+}
+
+ul {
+  display: flex;
+  max-width: 100%;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+ul, ul li {
+  padding: 0;
+  list-style: none;
+}
+
+img.thumbnail {
+  width: 180px;
+  height: 101px;
+}
+
+#selectedItem button {
+  display: block;
+}
+#selectedItem img {
+  width: 100%;
+  min-width: 100px;
+  max-width: 800px;
+  display: block;
+}
