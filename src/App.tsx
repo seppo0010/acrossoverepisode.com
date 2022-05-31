@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import './App.css'
+import striptags from 'striptags'
 // eslint-disable-next-line import/no-webpack-loader-syntax
 const Worker = require('workerize-loader!./search.worker')
 
@@ -61,7 +62,7 @@ function App () {
         <ul aria-description="Search results">
           {searchResults.map((doc: SearchResult) => (<li key={doc.id}>
             <button title={doc.text} onClick={() => setSelectedItem(doc)}>
-              <img src={`https://acrossoverepisode-assets.storage.googleapis.com/${doc.season}x${('' + doc.episode).padStart(2, '0')}/${doc.id}_thumbnail.png`} alt={doc.text} className="thumbnail" />
+              <img src={`https://acrossoverepisode-assets.storage.googleapis.com/${doc.season}x${('' + doc.episode).padStart(2, '0')}/${doc.id}_thumbnail.png`} alt={striptags(doc.html)} className="thumbnail" />
             </button>
           </li>))}
         </ul>
