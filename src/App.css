@@ -1,13 +1,13 @@
-#searchTitle {
+header {
   display: flex;
   width: 100%;
 }
 
-#searchTitle h1 {
+header h1 {
   flex-grow: 1;
 }
 
-#searchTitle label {
+header label {
   display: flex;
   align-items: center;
 }

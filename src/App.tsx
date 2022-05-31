@@ -50,15 +50,13 @@ function App () {
 
   return (
     <div>
-      <div id="searchTitle">
-        <header>
-          <h1>What is this? A cross over episode?</h1>
-          <label>
-            <span>Search</span>
-            <input type="text" placeholder="Peanutbutter" value={searchCriteria} onChange={(event) => setSearchCriteria(event.target.value)} />
-          </label>
-        </header>
-      </div>
+      <header>
+        <h1>What is this? A cross over episode?</h1>
+        <label>
+          <span>Search</span>
+          <input type="text" placeholder="Peanutbutter" value={searchCriteria} onChange={(event) => setSearchCriteria(event.target.value)} />
+        </label>
+      </header>
       {/* these should be components, but I don't want to be coding front-end */}
       <main>
         {ready && searchResults.length > 0 && selectedItem === null && <div>
