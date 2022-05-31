@@ -51,35 +51,39 @@ function App () {
   return (
     <div>
       <div id="searchTitle">
-        <h1>What is this? A cross over episode?</h1>
-        <label>
-          <span>Search</span>
-          <input type="text" placeholder="Peanutbutter" value={searchCriteria} onChange={(event) => setSearchCriteria(event.target.value)} />
-        </label>
+        <header>
+          <h1>What is this? A cross over episode?</h1>
+          <label>
+            <span>Search</span>
+            <input type="text" placeholder="Peanutbutter" value={searchCriteria} onChange={(event) => setSearchCriteria(event.target.value)} />
+          </label>
+        </header>
       </div>
       {/* these should be components, but I don't want to be coding front-end */}
-      {ready && searchResults.length > 0 && selectedItem === null && <div>
-        <ul aria-description="Search results">
-          {searchResults.map((doc: SearchResult) => (<li key={doc.id}>
-            <button title={doc.text} onClick={() => setSelectedItem(doc)}>
-              <img src={`https://acrossoverepisode-assets.storage.googleapis.com/${doc.season}x${('' + doc.episode).padStart(2, '0')}/${doc.id}_thumbnail.png`} alt={striptags(doc.html)} className="thumbnail" />
-            </button>
-          </li>))}
-        </ul>
-      </div>}
-      {(!ready || searchResults.length === 0) && selectedItem === null && <div>
-        Search your favorite BoJack Horseman&apos;s scenes!
-      </div>}
-      {selectedItem !== null && <div id="selectedItem">
-        <button onClick={() => setSelectedItem(null)}>Back</button>
-          <img src={`https://acrossoverepisode-assets.storage.googleapis.com/${selectedItem.season}x${('' + selectedItem.episode).padStart(2, '0')}/${selectedItem.id}_still.png`} alt={'' /* no alt text as the caption will be below */} />
-        <p>
-          Season {selectedItem.season} / {' '}
-          Episode {selectedItem.episode}{' '}
-          ({new Date(parseInt(selectedItem.id, 10)).toISOString().substr(11, 8)})
-        </p>
-        <p dangerouslySetInnerHTML={{ __html: selectedItem.html }} />
-      </div>}
+      <main>
+        {ready && searchResults.length > 0 && selectedItem === null && <div>
+          <ul aria-description="Search results">
+            {searchResults.map((doc: SearchResult) => (<li key={doc.id}>
+              <button title={doc.text} onClick={() => setSelectedItem(doc)}>
+                <img src={`https://acrossoverepisode-assets.storage.googleapis.com/${doc.season}x${('' + doc.episode).padStart(2, '0')}/${doc.id}_thumbnail.png`} alt={striptags(doc.html)} className="thumbnail" />
+              </button>
+            </li>))}
+          </ul>
+        </div>}
+        {(!ready || searchResults.length === 0) && selectedItem === null && <div>
+          Search your favorite BoJack Horseman&apos;s scenes!
+        </div>}
+        {selectedItem !== null && <div id="selectedItem">
+          <button onClick={() => setSelectedItem(null)}>Back</button>
+            <img src={`https://acrossoverepisode-assets.storage.googleapis.com/${selectedItem.season}x${('' + selectedItem.episode).padStart(2, '0')}/${selectedItem.id}_still.png`} alt={'' /* no alt text as the caption will be below */} />
+          <p>
+            Season {selectedItem.season} / {' '}
+            Episode {selectedItem.episode}{' '}
+            ({new Date(parseInt(selectedItem.id, 10)).toISOString().substr(11, 8)})
+          </p>
+          <p dangerouslySetInnerHTML={{ __html: selectedItem.html }} />
+        </div>}
+      </main>
     </div>
   )
 }
