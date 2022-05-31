@@ -14,7 +14,7 @@ const doSearch = () => {
 }
 
 export async function init () {
-  fetch('data/index.json')
+  fetch('https://acrossoverepisode-assets.storage.googleapis.com/index.json')
     .then((res) => res.text())
     // minisearch configuration must match datamaker's
     .then((data) => {

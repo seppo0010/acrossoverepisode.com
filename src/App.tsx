@@ -4,7 +4,6 @@ import './App.css'
 const Worker = require('workerize-loader!./search.worker')
 
 interface SearchResult {
-  stillPath: string
   html: string
   text: string
   season: number
@@ -60,9 +59,9 @@ function App () {
       {/* these should be components, but I don't want to be coding front-end */}
       {ready && searchResults.length > 0 && selectedItem === null && <div>
         <ul aria-description="Search results">
-          {searchResults.map((doc: SearchResult) => (<li key={doc.stillPath}>
+          {searchResults.map((doc: SearchResult) => (<li key={doc.id}>
             <button title={doc.text} onClick={() => setSelectedItem(doc)}>
-              <img src={`data/${doc.stillPath}`} alt={doc.text} className="thumbnail" />
+              <img src={`https://acrossoverepisode-assets.storage.googleapis.com/${doc.season}x${('' + doc.episode).padStart(2, '0')}/${doc.id}_thumbnail.png`} alt={doc.text} className="thumbnail" />
             </button>
           </li>))}
         </ul>
@@ -72,7 +71,7 @@ function App () {
       </div>}
       {selectedItem !== null && <div id="selectedItem">
         <button onClick={() => setSelectedItem(null)}>Back</button>
-        <img src={`data/${selectedItem.stillPath}`} alt={'' /* no alt text as the caption will be below */} />
+          <img src={`https://acrossoverepisode-assets.storage.googleapis.com/${selectedItem.season}x${('' + selectedItem.episode).padStart(2, '0')}/${selectedItem.id}_still.png`} alt={'' /* no alt text as the caption will be below */} />
         <p>
           Season {selectedItem.season} / {' '}
           Episode {selectedItem.episode}{' '}
