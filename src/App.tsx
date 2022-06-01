@@ -120,7 +120,7 @@ function App () {
   return (
     <div id="main">
       <header>
-        <h1>What is this? A cross over episode?</h1>
+        <h1>What is this? A crossover episode?</h1>
         <label>
           <span>Search</span>
           <input type="text" placeholder="Peanutbutter" value={searchCriteria} onChange={(event) => {
