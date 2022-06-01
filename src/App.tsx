@@ -6,7 +6,6 @@ const Worker = require('workerize-loader!./search.worker')
 
 interface SearchResult {
   html: string
-  text: string
   season: number
   episode: number
   id: string
@@ -35,6 +34,10 @@ function App () {
       switch (t) {
         case 'setReady': setReady(params); break
         case 'setSearchResults': setSearchResults(params); break
+        case 'setRandomFrame':
+          setSelectedItem(params);
+          setCaption(striptags(params.html))
+          break
         default: console.error('unexpected message type: ' + t); break
       }
     })
@@ -85,6 +88,10 @@ function App () {
     };
   }, [selectedItem, caption]);
 
+  const fetchRandomFrame = () => {
+    workerInstance?.randomFrame()
+  }
+
   return (
     <div>
       <header>
@@ -95,6 +102,7 @@ function App () {
             setSearchCriteria(event.target.value)
             setSelectedItem(null)
           }} />
+          <button onClick={fetchRandomFrame}>Random</button>
         </label>
       </header>
       {/* these should be components, but I don't want to be coding front-end */}
@@ -102,7 +110,7 @@ function App () {
         {ready && searchResults.length > 0 && selectedItem === null && <div>
           <ul aria-description="Search results">
             {searchResults.map((doc: SearchResult) => (<li key={doc.id}>
-              <button title={doc.text} onClick={() => {
+              <button title={striptags(doc.html)} onClick={() => {
                 setSelectedItem(doc)
                 setCaption(striptags(doc.html))
               }}>
