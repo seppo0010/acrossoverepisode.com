@@ -42,7 +42,12 @@ img.thumbnail {
 #selectedItem button {
   display: block;
 }
+
 #selectedItem canvas {
+  display: none;
+}
+
+#selectedItem img {
   width: 100%;
   min-width: 100px;
   max-width: 800px;

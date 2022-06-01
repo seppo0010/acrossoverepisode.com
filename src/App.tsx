@@ -19,7 +19,8 @@ function App () {
   const [searchCriteria, setSearchCriteria] = useState('')
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
   const [selectedItem, setSelectedItem] = useState<SearchResult | null>(null)
-  const canvasRef = useRef(null)
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const imageRef = useRef<HTMLImageElement | null>(null)
 
   useEffect(() => {
     if (workerInstance) return
@@ -80,6 +81,7 @@ function App () {
         }
       }
       ctx.fillText(text, image.width / 2, image.height - 68);
+      imageRef.current!.src = canvas.toDataURL()
     };
   }, [selectedItem]);
 
@@ -112,6 +114,7 @@ function App () {
         {selectedItem !== null && <div id="selectedItem">
           <button onClick={() => setSelectedItem(null)}>Back</button>
           <canvas ref={canvasRef}></canvas>
+          <img ref={imageRef} alt="" />
           <p>
             Season {selectedItem.season} / {' '}
             Episode {selectedItem.episode}{' '}
