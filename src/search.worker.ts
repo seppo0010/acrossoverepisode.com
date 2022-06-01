@@ -8,6 +8,7 @@ let storedFields: Record<string, {
   html: string,
   season: number,
 }> | undefined
+let reverseIndex: Record<string, string> = {}
 
 const doSearch = () => {
   if (!index) return
@@ -35,6 +36,11 @@ export async function init () {
       const jsonData = JSON.parse(data)
       documentIds = jsonData.documentIds
       storedFields = jsonData.storedFields
+      console.log('number of documents', Object.keys(documentIds!).length)
+      reverseIndex = Object.fromEntries(Object.entries(documentIds || {}).map(([index, id]) => {
+        const f = storedFields![index]
+        return [`${f.season}:${f.episode}:${id}`, index]
+      }))
       global.self.postMessage(['setReady', true])
       doSearch()
     })
@@ -55,7 +61,31 @@ export function randomFrame() {
   if (!storedFields[key]) {
     return
   }
-  global.self.postMessage(['setRandomFrame', {
+  global.self.postMessage(['goToFrame', {
+    id: documentIds[key],
+    episode: storedFields[key].episode,
+    html: storedFields[key].html,
+    season: storedFields[key].season,
+  }])
+}
+
+export function nextFrame(season: string, episode: string, id: string) {
+  if (!documentIds || !storedFields) return
+  const currentFrame = `${season}:${episode}:${id}`
+  const key = (parseInt(reverseIndex[currentFrame], 10) + 1) + ''
+  global.self.postMessage(['goToFrame', {
+    id: documentIds[key],
+    episode: storedFields[key].episode,
+    html: storedFields[key].html,
+    season: storedFields[key].season,
+  }])
+}
+
+export function previousFrame(season: string, episode: string, id: string) {
+  if (!documentIds || !storedFields) return
+  const currentFrame = `${season}:${episode}:${id}`
+  const key = (parseInt(reverseIndex[currentFrame], 10) - 1) + ''
+  global.self.postMessage(['goToFrame', {
     id: documentIds[key],
     episode: storedFields[key].episode,
     html: storedFields[key].html,

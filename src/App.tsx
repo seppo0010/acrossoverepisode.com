@@ -34,7 +34,7 @@ function App () {
       switch (t) {
         case 'setReady': setReady(params); break
         case 'setSearchResults': setSearchResults(params); break
-        case 'setRandomFrame':
+        case 'goToFrame':
           setSelectedItem(params);
           setCaption(striptags(params.html))
           break
@@ -58,6 +58,7 @@ function App () {
     const canvas = canvasRef.current as (HTMLCanvasElement | null)
     if (!canvas || !selectedItem) return;
     const ctx = canvas.getContext('2d');
+    if (imageRef.current) imageRef.current.src = ''
     const image = new Image();
     image.crossOrigin = "Anonymous";
     image.src = `https://acrossoverepisode-assets.storage.googleapis.com/${selectedItem.season}x${('' + selectedItem.episode).padStart(2, '0')}/${selectedItem.id}_still.png`
@@ -96,6 +97,13 @@ function App () {
 
   const fetchRandomFrame = () => {
     workerInstance?.randomFrame()
+  }
+
+  const previous = () => {
+    workerInstance?.previousFrame(selectedItem!.season, selectedItem!.episode, selectedItem!.id)
+  }
+  const next = () => {
+    workerInstance?.nextFrame(selectedItem!.season, selectedItem!.episode, selectedItem!.id)
   }
 
   return (
@@ -138,6 +146,8 @@ function App () {
             ({new Date(parseInt(selectedItem.id, 10)).toISOString().substr(11, 8)})
           </p>
           <textarea value={caption} onChange={(event) => setCaption(event.target.value)}></textarea>
+          <button onClick={previous}>Previous</button>
+          <button onClick={next}>Next</button>
         </div>}
       </main>
     </div>
