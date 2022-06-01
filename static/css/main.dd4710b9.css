@@ -1,2 +1,0 @@
-@font-face{font-family:Ness;src:url(/static/media/ness.0e25d6ca48458b9895c5.ttf)}*{font-family:Ness}header{display:flex;width:100%}header h1{flex-grow:1;font:700 24px Ness}header label{align-items:center;display:flex}button{border:none;padding:0}ul{display:flex;flex-wrap:wrap;gap:20px;max-width:100%}ul,ul li{list-style:none;padding:0}img.thumbnail{height:101px;width:180px}#selectedItem button{display:block}#selectedItem img{display:block;max-width:800px;min-width:100px;width:100%}
-/*# sourceMappingURL=main.dd4710b9.css.map*/
