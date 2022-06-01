@@ -54,6 +54,7 @@ function App () {
     if (!canvas || !selectedItem) return;
     const ctx = canvas.getContext('2d');
     const image = new Image();
+    image.crossOrigin = "Anonymous";
     image.src = `https://acrossoverepisode-assets.storage.googleapis.com/${selectedItem.season}x${('' + selectedItem.episode).padStart(2, '0')}/${selectedItem.id}_still.png`
     image.onload = function(){
       if (!ctx) return;
@@ -111,6 +112,7 @@ function App () {
         {selectedItem !== null && <div id="selectedItem">
           <button onClick={() => setSelectedItem(null)}>Back</button>
           <canvas ref={canvasRef}></canvas>
+          <button onClick={() => (canvasRef.current as any).toBlob((blob: any) => navigator.clipboard.write([new ClipboardItem({'image/png': blob})]))}>Copy</button>
           <p>
             Season {selectedItem.season} / {' '}
             Episode {selectedItem.episode}{' '}
