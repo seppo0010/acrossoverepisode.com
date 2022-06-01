@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import './App.css'
 import striptags from 'striptags'
 // eslint-disable-next-line import/no-webpack-loader-syntax
@@ -19,6 +19,7 @@ function App () {
   const [searchCriteria, setSearchCriteria] = useState('')
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
   const [selectedItem, setSelectedItem] = useState<SearchResult | null>(null)
+  const canvasRef = useRef(null)
 
   useEffect(() => {
     if (workerInstance) return
@@ -48,6 +49,39 @@ function App () {
     workerInstance.init()
   }, [loading, workerInstance])
 
+  useEffect(() => {
+    const canvas = canvasRef.current as (HTMLCanvasElement | null)
+    if (!canvas || !selectedItem) return;
+    const ctx = canvas.getContext('2d');
+    const image = new Image();
+    image.src = `https://acrossoverepisode-assets.storage.googleapis.com/${selectedItem.season}x${('' + selectedItem.episode).padStart(2, '0')}/${selectedItem.id}_still.png`
+    image.onload = function(){
+      if (!ctx) return;
+      let size = 68
+      canvas.width = image.width
+      canvas.height = image.height
+      const x = this as any
+      ctx.drawImage(x, 0, 0, x.width, x.height);
+      ctx.font = size + 'px Ness';
+      ctx.fillStyle = 'yellow';
+      ctx.textBaseline = 'top';
+      ctx.textAlign = 'center';
+      ctx.shadowColor = 'black';
+      ctx.shadowOffsetX = 1;
+      ctx.shadowOffsetY = 1;
+      const text = striptags(selectedItem.html)
+      while (size > 10) {
+        if (ctx.measureText(text).width > image.width) {
+          size--
+          ctx.font = size + 'px Ness';
+        } else {
+          break
+        }
+      }
+      ctx.fillText(text, image.width / 2, image.height - 68);
+    };
+  }, [selectedItem]);
+
   return (
     <div>
       <header>
@@ -73,7 +107,7 @@ function App () {
         </div>}
         {selectedItem !== null && <div id="selectedItem">
           <button onClick={() => setSelectedItem(null)}>Back</button>
-            <img src={`https://acrossoverepisode-assets.storage.googleapis.com/${selectedItem.season}x${('' + selectedItem.episode).padStart(2, '0')}/${selectedItem.id}_still.png`} alt={'' /* no alt text as the caption will be below */} />
+          <canvas ref={canvasRef}></canvas>
           <p>
             Season {selectedItem.season} / {' '}
             Episode {selectedItem.episode}{' '}
