@@ -58,7 +58,10 @@ function App () {
     const canvas = canvasRef.current as (HTMLCanvasElement | null)
     if (!canvas || !selectedItem) return;
     const ctx = canvas.getContext('2d');
-    if (imageRef.current) imageRef.current.src = ''
+    if (imageRef.current && ctx) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      imageRef.current.src = canvas.toDataURL()
+    }
     const image = new Image();
     image.crossOrigin = "Anonymous";
     image.src = `https://acrossoverepisode-assets.storage.googleapis.com/${selectedItem.season}x${('' + selectedItem.episode).padStart(2, '0')}/${selectedItem.id}_still.png`
