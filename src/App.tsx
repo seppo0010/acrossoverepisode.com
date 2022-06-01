@@ -19,6 +19,7 @@ function App () {
   const [searchCriteria, setSearchCriteria] = useState('')
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
   const [selectedItem, setSelectedItem] = useState<SearchResult | null>(null)
+  const [caption, setCaption] = useState('')
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const imageRef = useRef<HTMLImageElement | null>(null)
 
@@ -71,19 +72,18 @@ function App () {
       ctx.shadowColor = 'black';
       ctx.shadowOffsetX = 1;
       ctx.shadowOffsetY = 1;
-      const text = striptags(selectedItem.html)
       while (size > 10) {
-        if (ctx.measureText(text).width > image.width) {
+        if (ctx.measureText(caption).width > image.width) {
           size--
           ctx.font = size + 'px Ness';
         } else {
           break
         }
       }
-      ctx.fillText(text, image.width / 2, image.height - 68);
+      ctx.fillText(caption, image.width / 2, image.height - 68);
       imageRef.current!.src = canvas.toDataURL()
     };
-  }, [selectedItem]);
+  }, [selectedItem, caption]);
 
   return (
     <div>
@@ -102,7 +102,10 @@ function App () {
         {ready && searchResults.length > 0 && selectedItem === null && <div>
           <ul aria-description="Search results">
             {searchResults.map((doc: SearchResult) => (<li key={doc.id}>
-              <button title={doc.text} onClick={() => setSelectedItem(doc)}>
+              <button title={doc.text} onClick={() => {
+                setSelectedItem(doc)
+                setCaption(striptags(doc.html))
+              }}>
                 <img src={`https://acrossoverepisode-assets.storage.googleapis.com/${doc.season}x${('' + doc.episode).padStart(2, '0')}/${doc.id}_thumbnail.png`} alt={striptags(doc.html)} className="thumbnail" />
               </button>
             </li>))}
@@ -120,7 +123,7 @@ function App () {
             Episode {selectedItem.episode}{' '}
             ({new Date(parseInt(selectedItem.id, 10)).toISOString().substr(11, 8)})
           </p>
-          <p dangerouslySetInnerHTML={{ __html: selectedItem.html }} />
+          <textarea value={caption} onChange={(event) => setCaption(event.target.value)}></textarea>
         </div>}
       </main>
     </div>

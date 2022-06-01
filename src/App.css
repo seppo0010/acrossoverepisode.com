@@ -53,3 +53,7 @@ img.thumbnail {
   max-width: 800px;
   display: block;
 }
+
+textarea {
+  width: 100%;
+}
