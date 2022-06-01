@@ -63,7 +63,8 @@ function App () {
     image.src = `https://acrossoverepisode-assets.storage.googleapis.com/${selectedItem.season}x${('' + selectedItem.episode).padStart(2, '0')}/${selectedItem.id}_still.png`
     image.onload = function(){
       if (!ctx) return;
-      let size = 68
+      let size = 48
+      const padding = 10
       canvas.width = image.width
       canvas.height = image.height
       const x = this as any
@@ -75,15 +76,20 @@ function App () {
       ctx.shadowColor = 'black';
       ctx.shadowOffsetX = 1;
       ctx.shadowOffsetY = 1;
-      while (size > 10) {
-        if (ctx.measureText(caption).width > image.width) {
-          size--
-          ctx.font = size + 'px Ness';
-        } else {
-          break
+      const lines = caption.split('\n')
+      lines.forEach((line) => {
+        while (size > 10) {
+          if (ctx.measureText(line).width > image.width - 2 * padding) {
+            size--
+            ctx.font = size + 'px Ness';
+          } else {
+            break
+          }
         }
-      }
-      ctx.fillText(caption, image.width / 2, image.height - 68);
+      })
+      lines.reverse().forEach((line, i) => {
+        ctx.fillText(line, image.width / 2, image.height - (size - 4) * (1 + i) - padding)
+      })
       imageRef.current!.src = canvas.toDataURL()
     };
   }, [selectedItem, caption]);
