@@ -88,7 +88,10 @@ function App () {
         <h1>What is this? A cross over episode?</h1>
         <label>
           <span>Search</span>
-          <input type="text" placeholder="Peanutbutter" value={searchCriteria} onChange={(event) => setSearchCriteria(event.target.value)} />
+          <input type="text" placeholder="Peanutbutter" value={searchCriteria} onChange={(event) => {
+            setSearchCriteria(event.target.value)
+            setSelectedItem(null)
+          }} />
         </label>
       </header>
       {/* these should be components, but I don't want to be coding front-end */}
