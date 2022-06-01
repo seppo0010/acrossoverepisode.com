@@ -112,7 +112,6 @@ function App () {
         {selectedItem !== null && <div id="selectedItem">
           <button onClick={() => setSelectedItem(null)}>Back</button>
           <canvas ref={canvasRef}></canvas>
-          <button onClick={() => (canvasRef.current as any).toBlob((blob: any) => navigator.clipboard.write([new ClipboardItem({'image/png': blob})]))}>Copy</button>
           <p>
             Season {selectedItem.season} / {' '}
             Episode {selectedItem.episode}{' '}
