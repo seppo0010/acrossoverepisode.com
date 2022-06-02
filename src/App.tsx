@@ -135,7 +135,7 @@ function App () {
         {ready && searchResults.length > 0 && selectedItem === null && <div>
           <ul aria-description="Search results">
             {searchResults.map((doc: SearchResult) => (<li key={doc.id} className="searchResult">
-              <button title={striptags(doc.html)} onClick={() => {
+              <button onClick={() => {
                 setSelectedItem(doc)
                 setCaption(striptags(doc.html))
               }}>
