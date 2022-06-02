@@ -48,6 +48,10 @@ function App () {
   }, [searchCriteria, workerInstance])
 
   useEffect(() => {
+    document.body.className = selectedItem !== null || searchResults.length > 0 ? '' : 'empty'
+  }, [selectedItem, searchResults])
+
+  useEffect(() => {
     if (loading || !workerInstance) return
     setLoading(true)
 

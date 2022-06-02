@@ -1,3 +1,15 @@
+html {
+  min-height: 100%;
+}
+
+body {
+  min-height: 100%;
+}
+
+body.empty {
+  background: white url('bg.png') no-repeat bottom center;
+}
+
 #main {
   width: 100%;
   max-width: 800px;
