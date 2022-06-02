@@ -55,7 +55,9 @@ ul, ul li {
 
 .searchResult {
   position: relative;
+  margin: 0 auto;
 }
+
 .searchResult span {
   position: absolute;
   color: yellow;
