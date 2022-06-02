@@ -36,7 +36,6 @@ export async function init () {
       const jsonData = JSON.parse(data)
       documentIds = jsonData.documentIds
       storedFields = jsonData.storedFields
-      console.log('number of documents', Object.keys(documentIds!).length)
       reverseIndex = Object.fromEntries(Object.entries(documentIds || {}).map(([index, id]) => {
         const f = storedFields![index]
         return [`${f.season}:${f.episode}:${id}`, index]
