@@ -14,11 +14,13 @@ const doSearch = () => {
   if (!index) return
   const c = criteria.split(' ').filter((x) => x.length >= 3).join(' ')
   if (c === '') {
+    global.self.postMessage(['setDidSearch', false])
     global.self.postMessage(['setSearchResults', []])
     return
   }
   const results = index.search(criteria)
   const filtered = results.filter((tag, index, array) => array.findIndex((doc) => tag.id === doc.id) === index);
+  global.self.postMessage(['setDidSearch', true])
   global.self.postMessage(['setSearchResults', filtered.slice(0, 40)])
 }
 

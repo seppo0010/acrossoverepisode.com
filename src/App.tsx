@@ -19,6 +19,7 @@ function App () {
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
   const [selectedItem, setSelectedItem] = useState<SearchResult | null>(null)
   const [caption, setCaption] = useState('')
+  const [didSearch, setDidSearch] = useState(false)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const imageRef = useRef<HTMLImageElement | null>(null)
 
@@ -34,6 +35,7 @@ function App () {
       switch (t) {
         case 'setReady': setReady(params); break
         case 'setSearchResults': setSearchResults(params); break
+        case 'setDidSearch': setDidSearch(params); break
         case 'goToFrame':
           setSelectedItem(params);
           setCaption(striptags(params.html))
@@ -143,7 +145,7 @@ function App () {
           </ul>
         </div>}
         {(!ready || searchResults.length === 0) && selectedItem === null && <div>
-          Search your favorite BoJack Horseman&apos;s scenes!
+          {searchCriteria.length === 0 ? 'Search your favorite BoJack Horseman\'s scenes!' : (didSearch ? 'No results' : 'Type more to search')}
         </div>}
         {selectedItem !== null && <div id="selectedItem">
           <button onClick={() => setSelectedItem(null)} className="back">Back to search</button>
