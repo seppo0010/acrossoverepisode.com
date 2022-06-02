@@ -62,6 +62,8 @@ function App () {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       imageRef.current.src = canvas.toDataURL()
     }
+    canvas.width = 720
+    canvas.height = 405
     const image = new Image();
     image.crossOrigin = "Anonymous";
     image.src = `https://acrossoverepisode-assets.storage.googleapis.com/${selectedItem.season}x${('' + selectedItem.episode).padStart(2, '0')}/${selectedItem.id}_still.png`
@@ -110,7 +112,7 @@ function App () {
   }
 
   return (
-    <div>
+    <div id="main">
       <header>
         <h1>What is this? A cross over episode?</h1>
         <label>
@@ -140,17 +142,19 @@ function App () {
           Search your favorite BoJack Horseman&apos;s scenes!
         </div>}
         {selectedItem !== null && <div id="selectedItem">
-          <button onClick={() => setSelectedItem(null)}>Back</button>
+          <button onClick={() => setSelectedItem(null)} className="back">Back to search</button>
           <canvas ref={canvasRef}></canvas>
           <img ref={imageRef} alt="" />
+          <div id="frameNavigation">
+            <button onClick={previous}>Previous</button>
+            <button onClick={next}>Next</button>
+          </div>
           <p>
             Season {selectedItem.season} / {' '}
             Episode {selectedItem.episode}{' '}
             ({new Date(parseInt(selectedItem.id, 10)).toISOString().substr(11, 8)})
           </p>
-          <textarea value={caption} onChange={(event) => setCaption(event.target.value)}></textarea>
-          <button onClick={previous}>Previous</button>
-          <button onClick={next}>Next</button>
+          <textarea value={caption} onChange={(event) => setCaption(event.target.value)} aria-label="Caption"></textarea>
         </div>}
       </main>
     </div>

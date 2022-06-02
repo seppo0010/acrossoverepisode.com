@@ -1,3 +1,9 @@
+#main {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
 header {
   display: flex;
   width: 100%;
@@ -14,12 +20,12 @@ header label {
 }
 
 header input {
-  margin-left: 4px;
+  margin: 0 4px;
 }
 
 button {
   border: none;
-  padding: 0;
+  padding: 4px 10px;
 }
 
 ul {
@@ -39,6 +45,10 @@ img.thumbnail {
   height: 101px;
 }
 
+#selectedItem .back {
+  margin-bottom: 8px;
+}
+
 #selectedItem button {
   display: block;
 }
@@ -47,13 +57,19 @@ img.thumbnail {
   display: none;
 }
 
-#selectedItem img {
-  width: 100%;
-  min-width: 100px;
-  max-width: 800px;
-  display: block;
+#selectedItem #frameNavigation {
+  display: flex;
 }
 
-textarea {
+#selectedItem #frameNavigation button:nth-child(2) {
+  margin-left: auto;
+}
+
+#selectedItem img {
+  display: block;
+  width: 100%;
+}
+
+#selectedItem textarea {
   width: 100%;
 }
