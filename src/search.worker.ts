@@ -17,7 +17,9 @@ const doSearch = () => {
     global.self.postMessage(['setSearchResults', []])
     return
   }
-  global.self.postMessage(['setSearchResults', index.search(criteria).slice(0, 40)])
+  const results = index.search(criteria)
+  const filtered = results.filter((tag, index, array) => array.findIndex((doc) => tag.id === doc.id) === index);
+  global.self.postMessage(['setSearchResults', filtered.slice(0, 40)])
 }
 
 export async function init () {
