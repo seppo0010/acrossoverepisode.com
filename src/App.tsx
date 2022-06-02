@@ -134,12 +134,13 @@ function App () {
       <main>
         {ready && searchResults.length > 0 && selectedItem === null && <div>
           <ul aria-description="Search results">
-            {searchResults.map((doc: SearchResult) => (<li key={doc.id}>
+            {searchResults.map((doc: SearchResult) => (<li key={doc.id} className="searchResult">
               <button title={striptags(doc.html)} onClick={() => {
                 setSelectedItem(doc)
                 setCaption(striptags(doc.html))
               }}>
-                <img src={`https://acrossoverepisode-assets.storage.googleapis.com/${doc.season}x${('' + doc.episode).padStart(2, '0')}/${doc.id}_thumbnail.png`} alt={striptags(doc.html)} className="thumbnail" />
+                <img src={`https://acrossoverepisode-assets.storage.googleapis.com/${doc.season}x${('' + doc.episode).padStart(2, '0')}/${doc.id}_thumbnail.png`} alt="" className="thumbnail" />
+                <span>{striptags(doc.html)}</span>
               </button>
             </li>))}
           </ul>

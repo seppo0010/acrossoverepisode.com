@@ -53,6 +53,20 @@ ul, ul li {
   list-style: none;
 }
 
+.searchResult {
+  position: relative;
+}
+.searchResult span {
+  position: absolute;
+  color: yellow;
+  bottom: 10px;
+  width: 100%;
+  text-align: center;
+  text-shadow: black 1px 1px;
+  left: 0;
+  white-space: pre-line;
+}
+
 img.thumbnail {
   width: 180px;
   height: 101px;
