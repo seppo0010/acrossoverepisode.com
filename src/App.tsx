@@ -86,9 +86,6 @@ function App () {
         ctx.fillStyle = 'yellow'
         ctx.textBaseline = 'top'
         ctx.textAlign = 'center'
-        ctx.shadowColor = 'black'
-        ctx.shadowOffsetX = 1
-        ctx.shadowOffsetY = 1
         const lines = caption.split('\n')
         lines.forEach((line) => {
           while (size > 10) {
@@ -101,7 +98,11 @@ function App () {
           }
         })
         lines.reverse().forEach((line, i) => {
-          ctx.fillText(line, image.width / 2, image.height - (size - 4) * (1 + i) - padding)
+          const x = image.width / 2
+          const y = image.height - (size - 4) * (1 + i) - padding
+          ctx.lineWidth = 6
+          ctx.strokeText(line, x, y)
+          ctx.fillText(line, x, y)
         })
         resolve(canvas.toDataURL())
       }
