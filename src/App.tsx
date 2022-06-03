@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import './App.css'
 import striptags from 'striptags'
 // eslint-disable-next-line import/no-webpack-loader-syntax
@@ -20,6 +20,7 @@ function App () {
   const [selectedItem, setSelectedItem] = useState<SearchResult | null>(null)
   const [caption, setCaption] = useState('')
   const [didSearch, setDidSearch] = useState(false)
+  const [mosaicData, setMosaicData] = useState('')
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const imageRef = useRef<HTMLImageElement | null>(null)
 
@@ -60,51 +61,61 @@ function App () {
     workerInstance.init()
   }, [loading, workerInstance])
 
-  useEffect(() => {
+  const getCurrentFrame = useCallback((): Promise<string | undefined> => {
     const canvas = canvasRef.current as (HTMLCanvasElement | null)
-    if (!canvas || !selectedItem) return;
+    if (!canvas || !selectedItem) return Promise.resolve(undefined)
     const ctx = canvas.getContext('2d');
-    if (imageRef.current && ctx) {
+    if (ctx) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      imageRef.current.src = canvas.toDataURL()
     }
     canvas.width = 720
     canvas.height = 405
-    const image = new Image();
-    image.crossOrigin = "Anonymous";
-    image.src = `https://acrossoverepisode-assets.storage.googleapis.com/${selectedItem.season}x${('' + selectedItem.episode).padStart(2, '0')}/${selectedItem.id}_still.png`
-    image.onload = function(){
-      if (!ctx) return;
-      let size = 48
-      const padding = 10
-      canvas.width = image.width
-      canvas.height = image.height
-      const x = this as any
-      ctx.drawImage(x, 0, 0, x.width, x.height);
-      ctx.font = size + 'px Ness';
-      ctx.fillStyle = 'yellow';
-      ctx.textBaseline = 'top';
-      ctx.textAlign = 'center';
-      ctx.shadowColor = 'black';
-      ctx.shadowOffsetX = 1;
-      ctx.shadowOffsetY = 1;
-      const lines = caption.split('\n')
-      lines.forEach((line) => {
-        while (size > 10) {
-          if (ctx.measureText(line).width > image.width - 2 * padding) {
-            size--
-            ctx.font = size + 'px Ness';
-          } else {
-            break
+    const promise: Promise<string> = new Promise((resolve, reject) => {
+      const image = new Image();
+      image.crossOrigin = "Anonymous";
+      image.src = `https://acrossoverepisode-assets.storage.googleapis.com/${selectedItem.season}x${('' + selectedItem.episode).padStart(2, '0')}/${selectedItem.id}_still.png`
+      image.onload = function() {
+        if (!ctx) return reject();
+        let size = 48
+        const padding = 10
+        canvas.width = image.width
+        canvas.height = image.height
+        const x = this as any
+        ctx.drawImage(x, 0, 0, x.width, x.height);
+        ctx.font = size + 'px Ness';
+        ctx.fillStyle = 'yellow';
+        ctx.textBaseline = 'top';
+        ctx.textAlign = 'center';
+        ctx.shadowColor = 'black';
+        ctx.shadowOffsetX = 1;
+        ctx.shadowOffsetY = 1;
+        const lines = caption.split('\n')
+        lines.forEach((line) => {
+          while (size > 10) {
+            if (ctx.measureText(line).width > image.width - 2 * padding) {
+              size--
+              ctx.font = size + 'px Ness';
+            } else {
+              break
+            }
           }
-        }
-      })
-      lines.reverse().forEach((line, i) => {
-        ctx.fillText(line, image.width / 2, image.height - (size - 4) * (1 + i) - padding)
-      })
-      imageRef.current!.src = canvas.toDataURL()
-    };
-  }, [selectedItem, caption]);
+        })
+        lines.reverse().forEach((line, i) => {
+          ctx.fillText(line, image.width / 2, image.height - (size - 4) * (1 + i) - padding)
+        })
+        resolve(canvas.toDataURL())
+      }
+    })
+    return promise
+  }, [selectedItem, caption])
+
+  useEffect(() => {
+    (async () => {
+      if (imageRef.current) {
+        imageRef.current.src = (await getCurrentFrame()) || ''
+      }
+    })()
+  }, [getCurrentFrame])
 
   const fetchRandomFrame = () => {
     workerInstance?.randomFrame()
@@ -115,6 +126,36 @@ function App () {
   }
   const next = () => {
     workerInstance?.nextFrame(selectedItem!.season, selectedItem!.episode, selectedItem!.id)
+  }
+
+  const clearMosaic = async () => {
+    setMosaicData('');
+  }
+
+  const addCurrentFrameToMosaic = async () => {
+    const currentFrame = await getCurrentFrame()
+    if (!currentFrame) return;
+    const canvas = canvasRef.current as (HTMLCanvasElement | null)
+    if (!canvas || !selectedItem) return
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    canvas.height = 0
+    const image = new Image();
+    image.src = mosaicData
+    image.onerror = image.onload = function() {
+      const image2 = new Image()
+      image2.src = currentFrame
+      image2.onload = function() {
+        if (!ctx) return;
+        canvas.width = Math.max(image.width, image2.width)
+        canvas.height = image.height + image2.height
+        ctx.drawImage(image, 0, 0, image.width, image.height);
+        ctx.drawImage(image2, 0, image.height, image2.width, image2.height);
+        setMosaicData(canvas.toDataURL())
+      }
+    }
   }
 
   return (
@@ -133,6 +174,7 @@ function App () {
       {/* these should be components, but I don't want to be coding front-end */}
       <main>
         {ready && searchResults.length > 0 && selectedItem === null && <div>
+          {/* eslint-disable-next-line */}
           <ul aria-description="Search results">
             {searchResults.map((doc: SearchResult) => (<li key={doc.id} className="searchResult">
               <button onClick={() => {
@@ -162,6 +204,9 @@ function App () {
             ({new Date(parseInt(selectedItem.id, 10)).toISOString().substr(11, 8)})
           </p>
           <textarea value={caption} onChange={(event) => setCaption(event.target.value)} aria-label="Caption"></textarea>
+          <button onClick={addCurrentFrameToMosaic}>Add to mosaic</button>
+          <button onClick={clearMosaic}>Clear mosaic</button>
+          <img src={mosaicData} alt="" />
         </div>}
       </main>
     </div>
