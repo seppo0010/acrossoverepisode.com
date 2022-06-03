@@ -38,7 +38,7 @@ function App () {
         case 'setSearchResults': setSearchResults(params); break
         case 'setDidSearch': setDidSearch(params); break
         case 'goToFrame':
-          setSelectedItem(params);
+          setSelectedItem(params)
           setCaption(striptags(params.html))
           break
         default: console.error('unexpected message type: ' + t); break
@@ -64,37 +64,37 @@ function App () {
   const getCurrentFrame = useCallback((): Promise<string | undefined> => {
     const canvas = canvasRef.current as (HTMLCanvasElement | null)
     if (!canvas || !selectedItem) return Promise.resolve(undefined)
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d')
     if (ctx) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
     }
     canvas.width = 720
     canvas.height = 405
     const promise: Promise<string> = new Promise((resolve, reject) => {
-      const image = new Image();
-      image.crossOrigin = "Anonymous";
+      const image = new Image()
+      image.crossOrigin = 'Anonymous'
       image.src = `https://acrossoverepisode-assets.storage.googleapis.com/${selectedItem.season}x${('' + selectedItem.episode).padStart(2, '0')}/${selectedItem.id}_still.png`
-      image.onload = function() {
-        if (!ctx) return reject();
+      image.onload = function () {
+        if (!ctx) return reject(new Error('no context'))
         let size = 48
         const padding = 10
         canvas.width = image.width
         canvas.height = image.height
         const x = this as any
-        ctx.drawImage(x, 0, 0, x.width, x.height);
-        ctx.font = size + 'px Ness';
-        ctx.fillStyle = 'yellow';
-        ctx.textBaseline = 'top';
-        ctx.textAlign = 'center';
-        ctx.shadowColor = 'black';
-        ctx.shadowOffsetX = 1;
-        ctx.shadowOffsetY = 1;
+        ctx.drawImage(x, 0, 0, x.width, x.height)
+        ctx.font = size + 'px Ness'
+        ctx.fillStyle = 'yellow'
+        ctx.textBaseline = 'top'
+        ctx.textAlign = 'center'
+        ctx.shadowColor = 'black'
+        ctx.shadowOffsetX = 1
+        ctx.shadowOffsetY = 1
         const lines = caption.split('\n')
         lines.forEach((line) => {
           while (size > 10) {
             if (ctx.measureText(line).width > image.width - 2 * padding) {
               size--
-              ctx.font = size + 'px Ness';
+              ctx.font = size + 'px Ness'
             } else {
               break
             }
@@ -129,30 +129,30 @@ function App () {
   }
 
   const clearMosaic = async () => {
-    setMosaicData('');
+    setMosaicData('')
   }
 
   const addCurrentFrameToMosaic = async () => {
     const currentFrame = await getCurrentFrame()
-    if (!currentFrame) return;
+    if (!currentFrame) return
     const canvas = canvasRef.current as (HTMLCanvasElement | null)
     if (!canvas || !selectedItem) return
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d')
     if (ctx) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
     }
     canvas.height = 0
-    const image = new Image();
+    const image = new Image()
     image.src = mosaicData
-    image.onerror = image.onload = function() {
+    image.onerror = image.onload = function () {
       const image2 = new Image()
       image2.src = currentFrame
-      image2.onload = function() {
-        if (!ctx) return;
+      image2.onload = function () {
+        if (!ctx) return
         canvas.width = Math.max(image.width, image2.width)
         canvas.height = image.height + image2.height
-        ctx.drawImage(image, 0, 0, image.width, image.height);
-        ctx.drawImage(image2, 0, image.height, image2.width, image2.height);
+        ctx.drawImage(image, 0, 0, image.width, image.height)
+        ctx.drawImage(image2, 0, image.height, image2.width, image2.height)
         setMosaicData(canvas.toDataURL())
       }
     }

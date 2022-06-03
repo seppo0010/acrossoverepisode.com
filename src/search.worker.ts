@@ -19,7 +19,7 @@ const doSearch = () => {
     return
   }
   const results = index.search(criteria)
-  const filtered = results.filter((tag, index, array) => array.findIndex((doc) => tag.id === doc.id) === index);
+  const filtered = results.filter((tag, index, array) => array.findIndex((doc) => tag.id === doc.id) === index)
   global.self.postMessage(['setDidSearch', true])
   global.self.postMessage(['setSearchResults', filtered.slice(0, 40)])
 }
@@ -55,7 +55,7 @@ export async function search (searchCriteria: string) {
   doSearch()
 }
 
-export function randomFrame() {
+export function randomFrame () {
   if (!storedFields || !documentIds) {
     return
   }
@@ -68,11 +68,11 @@ export function randomFrame() {
     id: documentIds[key],
     episode: storedFields[key].episode,
     html: storedFields[key].html,
-    season: storedFields[key].season,
+    season: storedFields[key].season
   }])
 }
 
-export function nextFrame(season: string, episode: string, id: string) {
+export function nextFrame (season: string, episode: string, id: string) {
   if (!documentIds || !storedFields) return
   const currentFrame = `${season}:${episode}:${id}`
   const key = (parseInt(reverseIndex[currentFrame], 10) + 1) + ''
@@ -80,11 +80,11 @@ export function nextFrame(season: string, episode: string, id: string) {
     id: documentIds[key],
     episode: storedFields[key].episode,
     html: storedFields[key].html,
-    season: storedFields[key].season,
+    season: storedFields[key].season
   }])
 }
 
-export function previousFrame(season: string, episode: string, id: string) {
+export function previousFrame (season: string, episode: string, id: string) {
   if (!documentIds || !storedFields) return
   const currentFrame = `${season}:${episode}:${id}`
   const key = (parseInt(reverseIndex[currentFrame], 10) - 1) + ''
@@ -92,6 +92,6 @@ export function previousFrame(season: string, episode: string, id: string) {
     id: documentIds[key],
     episode: storedFields[key].episode,
     html: storedFields[key].html,
-    season: storedFields[key].season,
+    season: storedFields[key].season
   }])
 }
