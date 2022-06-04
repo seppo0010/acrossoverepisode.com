@@ -12,7 +12,9 @@ jobs:
 
       - name: Install and Build 🔧
         run: |
+          set -o allexport
           source .env-bojack
+          set +o allexport
           npm ci
           npm run build
 
