@@ -1,46 +1,65 @@
-# Getting Started with Create React App
+# acrossoverepisode.com
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![What is this? A crossover episode?](https://acrossoverepisode-assets.storage.googleapis.com/twitter_card.png)
 
-## Available Scripts
+Search for your favorites BoJack quotes!
 
-In the project directory, you can run:
+## Is this legal?
 
-### `npm start`
+Let's start by saying I am not a lawyer, so the following is my understanding
+of the [Fair Use doctrine](https://en.wikipedia.org/wiki/Fair_use).
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+There are four criterias one has to see to determine whether something is fair
+use:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+1. The purpose and character of the use, including whether such use is of
+   commercial nature or is for nonprofit educational purposes
 
-### `npm test`
+   The use in this case is non commercial, and the purpose is different from
+   the one the series does, as the primary function is to share specific scenes
+   and not to entertain.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. The nature of the copyright work
 
-### `npm run build`
+   Do we know whether BoJack Horseman is not based on a true story?
+   Yeah, this problably doesn't work.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+3. The amount and substantiality of the portion used in relation to the
+   copyrighted work as a whole
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+   The number of frames used for each episode is around 700 hundreds while the
+   whole episode is over 30.000 frames. However it does contain the full
+   transcription, although not the audio. Does it contain the "heart" of the
+   work? More like a ventricle.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+4. The effect of the use upon the potential market for, or value of, the
+   copyrighted work
 
-### `npm run eject`
+   No one will stop watching BoJack Horseman because of this site. If anything
+   people are more likely to watch it as this encourages sharing in social
+   media, sparking interest on new audiences.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+My personal assessment is that it is fair use. However if you own the copyright
+and you want me to take it down, I will do it, just send me an email to
+[seppo0010@gmail.com](seppo0010@gmail.com). However before you do that, 
+!(Is it possible maybe when the other guys tried to copyright the name BoJack
+Horseman, they wrote down something else by mistake, so "BoJack Horseman" is
+still up for grabs?
+)[https://acrossoverepisode-assets.storage.googleapis.com/copyright.png]
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## How do I run this? Can I make my own?
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Sure thing! You can provide your own videos with subtitles and get your still
+images and search index using
+[datamaker](https://github.com/seppo0010/isthisacrossoverepisode.com-datamaker/).
+You will then have to upload those into a static web server.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Set up the following environment variables:
+* `REACT_APP_TITLE`
+* `REACT_APP_ASSETS_URL`
+* `PUBLIC_URL`
+* `REACT_APP_SUBTITLE`
+* `REACT_APP_PLACEHOLDER`
+* `REACT_APP_TWITTER_CREATOR`
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+`npm run build` and upload the `build` directory
