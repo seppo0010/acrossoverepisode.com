@@ -189,7 +189,17 @@ function App () {
           </ul>
         </div>}
         {(!ready || searchResults.length === 0) && selectedItem === null && <div>
-          {searchCriteria.length === 0 ? 'Search your favorite BoJack Horseman\'s scenes!' : (didSearch ? 'No results' : 'Type more to search')}
+          {!ready
+            ? 'Loading...'
+            : (searchCriteria.length === 0
+                ? 'Search your favorite BoJack Horseman\'s scenes!'
+                : (
+                    didSearch
+                      ? 'No results'
+                      : 'Type more to search'
+                  )
+              )
+          }
         </div>}
         {selectedItem !== null && <div id="selectedItem">
           <button onClick={() => setSelectedItem(null)} className="back">Back to search</button>
