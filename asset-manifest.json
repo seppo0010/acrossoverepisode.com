@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/static/css/main.943b6bcd.css",
-    "main.js": "/static/js/main.65f6537e.js",
-    "static/js/787.483897ca.chunk.js": "/static/js/787.483897ca.chunk.js",
-    "worker.js": "/7e27c49ef81186e14d41.worker.js",
-    "static/media/ness.ttf": "/static/media/ness.0e25d6ca48458b9895c5.ttf",
-    "index.html": "/index.html",
-    "main.943b6bcd.css.map": "/static/css/main.943b6bcd.css.map",
-    "main.65f6537e.js.map": "/static/js/main.65f6537e.js.map",
-    "787.483897ca.chunk.js.map": "/static/js/787.483897ca.chunk.js.map"
+    "main.css": "https://acrossoverepisode.com/static/css/main.f581d8cf.css",
+    "main.js": "https://acrossoverepisode.com/static/js/main.7ce4a76a.js",
+    "static/js/787.483897ca.chunk.js": "https://acrossoverepisode.com/static/js/787.483897ca.chunk.js",
+    "worker.js": "https://acrossoverepisode.com/2d2a4bbb31bee293f391.worker.js",
+    "static/media/ness.ttf": "https://acrossoverepisode.com/static/media/ness.0e25d6ca48458b9895c5.ttf",
+    "index.html": "https://acrossoverepisode.com/index.html",
+    "main.f581d8cf.css.map": "https://acrossoverepisode.com/static/css/main.f581d8cf.css.map",
+    "main.7ce4a76a.js.map": "https://acrossoverepisode.com/static/js/main.7ce4a76a.js.map",
+    "787.483897ca.chunk.js.map": "https://acrossoverepisode.com/static/js/787.483897ca.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.943b6bcd.css",
-    "static/js/main.65f6537e.js"
+    "static/css/main.f581d8cf.css",
+    "static/js/main.7ce4a76a.js"
   ]
 }
