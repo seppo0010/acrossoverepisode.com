@@ -6,8 +6,8 @@ body {
   min-height: 100%;
 }
 
-body.empty {
-  background: white url('bg.png') no-repeat bottom center;
+body {
+  background: white no-repeat bottom center;
 }
 
 #main {

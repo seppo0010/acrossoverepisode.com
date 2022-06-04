@@ -51,7 +51,9 @@ function App () {
   }, [searchCriteria, workerInstance])
 
   useEffect(() => {
-    document.body.className = selectedItem !== null || searchResults.length > 0 ? '' : 'empty'
+    document.body.style.backgroundImage = selectedItem !== null || searchResults.length > 0
+      ? ''
+      : `url("${process.env.REACT_APP_ASSETS_URL}/bg.png")`
   }, [selectedItem, searchResults])
 
   useEffect(() => {
@@ -73,7 +75,7 @@ function App () {
     const promise: Promise<string> = new Promise((resolve, reject) => {
       const image = new Image()
       image.crossOrigin = 'Anonymous'
-      image.src = `https://acrossoverepisode-assets.storage.googleapis.com/${selectedItem.season}x${('' + selectedItem.episode).padStart(2, '0')}/${selectedItem.id}_still.png`
+      image.src = `${process.env.REACT_APP_ASSETS_URL}/${selectedItem.season}x${('' + selectedItem.episode).padStart(2, '0')}/${selectedItem.id}_still.png`
       image.onload = function () {
         if (!ctx) return reject(new Error('no context'))
         let size = 48
@@ -162,10 +164,10 @@ function App () {
   return (
     <div id="main">
       <header>
-        <h1>What is this? A crossover episode?</h1>
+        <h1>{process.env.REACT_APP_TITLE}</h1>
         <label>
           <span>Search</span>
-          <input type="text" placeholder="Peanutbutter" value={searchCriteria} onChange={(event) => {
+          <input type="text" placeholder={process.env.REACT_APP_PLACEHOLDER} value={searchCriteria} onChange={(event) => {
             setSearchCriteria(event.target.value)
             setSelectedItem(null)
           }} />
@@ -182,7 +184,7 @@ function App () {
                 setSelectedItem(doc)
                 setCaption(striptags(doc.html))
               }}>
-                <img src={`https://acrossoverepisode-assets.storage.googleapis.com/${doc.season}x${('' + doc.episode).padStart(2, '0')}/${doc.id}_thumbnail.png`} alt="" className="thumbnail" />
+                <img src={`${process.env.REACT_APP_ASSETS_URL}/${doc.season}x${('' + doc.episode).padStart(2, '0')}/${doc.id}_thumbnail.png`} alt="" className="thumbnail" />
                 <span>{striptags(doc.html)}</span>
               </button>
             </li>))}
@@ -192,7 +194,7 @@ function App () {
           {!ready
             ? 'Loading...'
             : (searchCriteria.length === 0
-                ? 'Search your favorite BoJack Horseman\'s scenes!'
+                ? process.env.REACT_APP_SUBTITLE
                 : (
                     didSearch
                       ? 'No results'
