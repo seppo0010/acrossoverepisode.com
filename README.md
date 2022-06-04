@@ -42,7 +42,10 @@ use:
 My personal assessment is that it is fair use. However if you own the copyright
 and you want me to take it down, I will do it, just send me an email to
 [seppo0010@gmail.com](seppo0010@gmail.com). However before you do that, 
-!(Is it possible maybe when the other guys tried to copyright the name BoJack Horseman, they wrote down something else by mistake, so BoJack Horseman is still up for grabs?)[https://acrossoverepisode-assets.storage.googleapis.com/copyright.png]
+[Is it possible maybe when the other guys tried to copyright the name BoJack
+Horseman, they wrote down something else by mistake, so "BoJack Horseman" is
+still up for grabs?
+](https://acrossoverepisode-assets.storage.googleapis.com/copyright.png)
 
 
 ## How do I run this? Can I make my own?
