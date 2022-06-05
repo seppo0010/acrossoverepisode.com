@@ -222,6 +222,9 @@ function App () {
           <img src={mosaicData} alt="" />
         </div>}
       </main>
+      <footer>
+        <a href="https://github.com/seppo0010/acrossoverepisode.com" target="_blank" rel="noreferrer">Fork me on GitHub</a>
+      </footer>
     </div>
   )
 }

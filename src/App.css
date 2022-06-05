@@ -14,6 +14,14 @@ body {
   width: 100%;
   max-width: 860px;
   margin: 0 auto;
+  position: relative;
+  min-height: calc(100vh - 60px);
+  padding-bottom: 40px;
+}
+
+footer {
+  position: absolute;
+  bottom: 10px;
 }
 
 header {
