@@ -74,10 +74,13 @@ header label #clear:focus {
   opacity: 1;
 }
 
+header button {
+  height: 30px;
+}
+
 button {
   border: none;
   padding: 4px 10px;
-  height: 30px;
 }
 
 ul {
