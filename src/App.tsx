@@ -171,8 +171,12 @@ function App () {
             setSearchCriteria(event.target.value)
             setSelectedItem(null)
           }} />
-          <button onClick={fetchRandomFrame}>Random</button>
+          <button onClick={() => {
+            setSearchCriteria('')
+            setSelectedItem(null)
+          }} aria-label="Clear" id="clear" className={searchCriteria === '' ? 'hidden' : ''}></button>
         </label>
+        <button onClick={fetchRandomFrame}>Random</button>
       </header>
       {/* these should be components, but I don't want to be coding front-end */}
       <main>
