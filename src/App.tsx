@@ -23,6 +23,7 @@ function App () {
   const [mosaicData, setMosaicData] = useState('')
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const imageRef = useRef<HTMLImageElement | null>(null)
+  const searchInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
     if (workerInstance) return
@@ -167,13 +168,14 @@ function App () {
         <h1>{process.env.REACT_APP_TITLE}</h1>
         <label>
           <span>Search</span>
-          <input autoFocus={true} type="text" placeholder={process.env.REACT_APP_PLACEHOLDER} value={searchCriteria} onChange={(event) => {
+          <input autoFocus={true} type="text" placeholder={process.env.REACT_APP_PLACEHOLDER} value={searchCriteria} ref={searchInputRef} onChange={(event) => {
             setSearchCriteria(event.target.value)
             setSelectedItem(null)
           }} />
           <button onClick={() => {
             setSearchCriteria('')
             setSelectedItem(null)
+            searchInputRef.current?.focus()
           }} aria-label="Clear" id="clear" className={searchCriteria === '' ? 'hidden' : ''}></button>
         </label>
         <button onClick={fetchRandomFrame}>Random</button>
