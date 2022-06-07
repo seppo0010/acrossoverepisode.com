@@ -167,7 +167,7 @@ function App () {
         <h1>{process.env.REACT_APP_TITLE}</h1>
         <label>
           <span>Search</span>
-          <input type="text" placeholder={process.env.REACT_APP_PLACEHOLDER} value={searchCriteria} onChange={(event) => {
+          <input autoFocus={true} type="text" placeholder={process.env.REACT_APP_PLACEHOLDER} value={searchCriteria} onChange={(event) => {
             setSearchCriteria(event.target.value)
             setSelectedItem(null)
           }} />
