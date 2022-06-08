@@ -72,10 +72,10 @@ export function randomFrame () {
   }])
 }
 
-export function nextFrame (season: string, episode: string, id: string) {
+export function goToFrame (season: string, episode: string, id: string, delta: number = 0) {
   if (!documentIds || !storedFields) return
   const currentFrame = `${season}:${episode}:${id}`
-  const key = (parseInt(reverseIndex[currentFrame], 10) + 1) + ''
+  const key = (parseInt(reverseIndex[currentFrame], 10) + delta) + ''
   global.self.postMessage(['goToFrame', {
     id: documentIds[key],
     episode: storedFields[key].episode,
@@ -84,14 +84,10 @@ export function nextFrame (season: string, episode: string, id: string) {
   }])
 }
 
+export function nextFrame (season: string, episode: string, id: string) {
+  return goToFrame(season, episode, id, 1)
+}
+
 export function previousFrame (season: string, episode: string, id: string) {
-  if (!documentIds || !storedFields) return
-  const currentFrame = `${season}:${episode}:${id}`
-  const key = (parseInt(reverseIndex[currentFrame], 10) - 1) + ''
-  global.self.postMessage(['goToFrame', {
-    id: documentIds[key],
-    episode: storedFields[key].episode,
-    html: storedFields[key].html,
-    season: storedFields[key].season
-  }])
+  return goToFrame(season, episode, id, -1)
 }
