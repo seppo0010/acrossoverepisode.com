@@ -39,7 +39,7 @@ function Main ({
   useEffect(() => {
     document.body.style.backgroundImage = searchResults.length > 0
       ? ''
-      : `url("${process.env.REACT_APP_ASSETS_URL}/bg.png")`
+      : `url("${process.env.REACT_APP_ASSETS_URL}/bg.${process.env.REACT_APP_ASSETS_EXTENSION || 'png'}")`
     return () => { document.body.style.backgroundImage = '' }
   }, [searchResults])
 
@@ -66,7 +66,7 @@ function Main ({
             setSelectedItem(doc)
             setCaption(striptags(doc.html))
           }}>
-            <img src={`${process.env.REACT_APP_ASSETS_URL}/${doc.season}x${('' + doc.episode).padStart(2, '0')}/${doc.id}_thumbnail.png`} alt="" className="thumbnail" />
+            <img src={`${process.env.REACT_APP_ASSETS_URL}/${doc.season}x${('' + doc.episode).padStart(2, '0')}/${doc.id}_thumbnail.${process.env.REACT_APP_ASSETS_EXTENSION || 'png'}`} alt="" className="thumbnail" />
             <span>{striptags(doc.html)}</span>
           </button>
         </li>))}
@@ -142,7 +142,7 @@ function Frame ({
     const promise: Promise<string> = new Promise((resolve, reject) => {
       const image = new Image()
       image.crossOrigin = 'Anonymous'
-      image.src = `${process.env.REACT_APP_ASSETS_URL}/${selectedItem.season}x${('' + selectedItem.episode).padStart(2, '0')}/${selectedItem.id}_still.png`
+      image.src = `${process.env.REACT_APP_ASSETS_URL}/${selectedItem.season}x${('' + selectedItem.episode).padStart(2, '0')}/${selectedItem.id}_still.${process.env.REACT_APP_ASSETS_EXTENSION || 'png'}`
       image.onload = function () {
         if (!ctx) return reject(new Error('no context'))
         let size = 48
