@@ -243,6 +243,11 @@ function WorkerTrigger ({
 }) {
   const navigate = useNavigate()
   const searchInputRef = useRef<HTMLInputElement | null>(null)
+  const placeholders = (process.env.REACT_APP_PLACEHOLDER || '').split(',')
+  const getRandomPlaceholderIndex = () => {
+    return Math.floor(Math.random() * placeholders.length)
+  }
+  const [placeholderIndex, setPlaceholderIndex] = useState(getRandomPlaceholderIndex)
 
   const processMessage = ({ data }: any) => {
     // I don't know why `const [t, params] = data` does not work
@@ -253,6 +258,7 @@ function WorkerTrigger ({
       case 'setSearchResults': setSearchResults(params); break
       case 'setDidSearch': setDidSearch(params); break
       case 'goToFrame':
+        setPlaceholderIndex(getRandomPlaceholderIndex())
         navigate(`/${encodeURIComponent(params.season)}/${encodeURIComponent(params.episode)}/${encodeURIComponent(params.id)}`)
         setSelectedItem(params)
         setCaption(striptags(params.html))
@@ -279,7 +285,7 @@ function WorkerTrigger ({
       <h1>{process.env.REACT_APP_TITLE}</h1>
       <label>
         <span>Search</span>
-        <input autoFocus={true} type="text" placeholder={process.env.REACT_APP_PLACEHOLDER} value={searchCriteria} ref={searchInputRef} onChange={(event) => {
+        <input autoFocus={true} type="text" placeholder={placeholders[placeholderIndex]} value={searchCriteria} ref={searchInputRef} onChange={(event) => {
           navigate('/')
           setSearchCriteria(event.target.value)
           setSelectedItem(null)
