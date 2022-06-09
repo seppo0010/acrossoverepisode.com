@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "https://acrossoverepisode.com/static/css/main.e83d502c.css",
-    "main.js": "https://acrossoverepisode.com/static/js/main.02965e4d.js",
+    "main.js": "https://acrossoverepisode.com/static/js/main.096d86ee.js",
     "static/js/787.483897ca.chunk.js": "https://acrossoverepisode.com/static/js/787.483897ca.chunk.js",
-    "worker.js": "https://acrossoverepisode.com/b5db0660504ebf375dfa.worker.js",
+    "worker.js": "https://acrossoverepisode.com/e9195d32cec749c447ba.worker.js",
     "index.html": "https://acrossoverepisode.com/index.html",
     "main.e83d502c.css.map": "https://acrossoverepisode.com/static/css/main.e83d502c.css.map",
-    "main.02965e4d.js.map": "https://acrossoverepisode.com/static/js/main.02965e4d.js.map",
+    "main.096d86ee.js.map": "https://acrossoverepisode.com/static/js/main.096d86ee.js.map",
     "787.483897ca.chunk.js.map": "https://acrossoverepisode.com/static/js/787.483897ca.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e83d502c.css",
-    "static/js/main.02965e4d.js"
+    "static/js/main.096d86ee.js"
   ]
 }
