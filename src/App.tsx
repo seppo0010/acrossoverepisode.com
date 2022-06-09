@@ -13,6 +13,12 @@ import {
 // eslint-disable-next-line import/no-webpack-loader-syntax
 const Worker = require('workerize-loader!./search.worker')
 
+const assetsUrl = process.env.REACT_APP_ASSETS_URL
+let assetsExtension = process.env.REACT_APP_ASSETS_EXTENSION || 'png'
+const testImage = new Image()
+testImage.src = 'data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAADybWV0YQAAAAAAAAAoaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAGxpYmF2aWYAAAAADnBpdG0AAAAAAAEAAAAeaWxvYwAAAABEAAABAAEAAAABAAABGgAAAB0AAAAoaWluZgAAAAAAAQAAABppbmZlAgAAAAABAABhdjAxQ29sb3IAAAAAamlwcnAAAABLaXBjbwAAABRpc3BlAAAAAAAAAAIAAAACAAAAEHBpeGkAAAAAAwgICAAAAAxhdjFDgQ0MAAAAABNjb2xybmNseAACAAIAAYAAAAAXaXBtYQAAAAAAAAABAAEEAQKDBAAAACVtZGF0EgAKCBgANogQEAwgMg8f8D///8WfhwB8+ErK42A='
+testImage.onload = () => { assetsExtension = 'avif' }
+
 interface SearchResult {
   html: string
   season: number
@@ -39,7 +45,7 @@ function Main ({
   useEffect(() => {
     document.body.style.backgroundImage = searchResults.length > 0
       ? ''
-      : `url("${process.env.REACT_APP_ASSETS_URL}/bg.${process.env.REACT_APP_ASSETS_EXTENSION || 'png'}")`
+      : `url("${assetsUrl}/bg.${assetsExtension}")`
     return () => { document.body.style.backgroundImage = '' }
   }, [searchResults])
 
@@ -66,7 +72,7 @@ function Main ({
             setSelectedItem(doc)
             setCaption(striptags(doc.html))
           }}>
-            <img src={`${process.env.REACT_APP_ASSETS_URL}/${doc.season}x${('' + doc.episode).padStart(2, '0')}/${doc.id}_thumbnail.${process.env.REACT_APP_ASSETS_EXTENSION || 'png'}`} alt="" className="thumbnail" />
+            <img src={`${assetsUrl}/${doc.season}x${('' + doc.episode).padStart(2, '0')}/${doc.id}_thumbnail.${assetsExtension}`} alt="" className="thumbnail" />
             <span>{striptags(doc.html)}</span>
           </button>
         </li>))}
@@ -142,7 +148,7 @@ function Frame ({
     const promise: Promise<string> = new Promise((resolve, reject) => {
       const image = new Image()
       image.crossOrigin = 'Anonymous'
-      image.src = `${process.env.REACT_APP_ASSETS_URL}/${selectedItem.season}x${('' + selectedItem.episode).padStart(2, '0')}/${selectedItem.id}_still.${process.env.REACT_APP_ASSETS_EXTENSION || 'png'}`
+      image.src = `${assetsUrl}/${selectedItem.season}x${('' + selectedItem.episode).padStart(2, '0')}/${selectedItem.id}_still.${assetsExtension}`
       image.onload = function () {
         if (!ctx) return reject(new Error('no context'))
         let size = 48
