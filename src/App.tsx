@@ -151,7 +151,7 @@ function Frame ({
         canvas.height = image.height
         const x = this as any
         ctx.drawImage(x, 0, 0, x.width, x.height)
-        ctx.font = size + 'px Ness'
+        ctx.font = size + 'px acrossoverepisode-font'
         ctx.fillStyle = 'yellow'
         ctx.textBaseline = 'top'
         ctx.textAlign = 'center'
@@ -160,7 +160,7 @@ function Frame ({
           while (size > 10) {
             if (ctx.measureText(line).width > image.width - 2 * padding) {
               size--
-              ctx.font = size + 'px Ness'
+              ctx.font = size + 'px acrossoverepisode-font'
             } else {
               break
             }
@@ -317,6 +317,19 @@ function App () {
   const [selectedItem, setSelectedItem] = useState<SearchResult | null>(null)
   const [caption, setCaption] = useState('')
   const [didSearch, setDidSearch] = useState(false)
+  const [didLoadFont, setDidLoadFont] = useState(0)
+
+  useEffect(() => {
+    if (didLoadFont !== 0) return
+    setDidLoadFont(1);
+
+    (async () => {
+      const newFont = new FontFace('acrossoverepisode-font', `url(${process.env.REACT_APP_ASSETS_URL}/font.ttf)`)
+      const loadedFace = await newFont.load()
+      document.fonts.add(loadedFace)
+      setDidLoadFont(2)
+    })()
+  }, [didLoadFont])
 
   useEffect(() => {
     if (workerInstance) return
@@ -339,7 +352,7 @@ function App () {
   }
 
   return (
-    <div id="main">
+    <div id="main" style={{ display: didLoadFont === 2 ? 'block' : 'none' }}>
       <HashRouter>
         <Routes>
           <Route element={
