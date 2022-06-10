@@ -1,0 +1,46 @@
+name: Build and Deploy
+on:
+  push:
+    branches:
+      - main
+      - friends
+
+jobs:
+  build-and-deploy:
+    concurrency: ci-${{ github.ref }}-friends
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+
+      - name: Update package.json URL
+        shell: node {0}
+        run: |
+          const fs = require('fs')
+          const p = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
+          p.homepage = 'https://seppo0010.github.io/theonewiththething.com'
+          fs.writeFileSync('package.json', JSON.stringify(p))
+
+      - name: Install and Build
+        run: |
+          set -o allexport
+          source .env-friends
+          set +o allexport
+          npm ci
+          npm run build
+
+      - name: Set CNAME
+        run: rm build/CNAME
+
+      - name: Deplo
+        uses: JamesIves/github-pages-deploy-action@v4.3.3
+        with:
+          branch: main
+          clean: true
+          folder: build
+          ssh-key: ${{ secrets.DEPLOY_KEY_FRIENDS }}
+          repository-name: seppo0010/theonewiththething.com
