@@ -156,19 +156,24 @@ function Frame ({
         ctx.textBaseline = 'top'
         ctx.textAlign = 'center'
         const lines = caption.split('\n')
+        let height = size - 4
         lines.forEach((line) => {
           while (size > 10) {
-            if (ctx.measureText(line).width > image.width - 2 * padding) {
+            const measure = ctx.measureText(line)
+            if (measure.width > image.width - 2 * padding) {
               size--
               ctx.font = size + 'px acrossoverepisode-font'
             } else {
               break
             }
+            if (measure.actualBoundingBoxDescent < size) {
+              height = measure.actualBoundingBoxDescent
+            }
           }
         })
         lines.reverse().forEach((line, i) => {
           const x = image.width / 2
-          const y = image.height - (size - 4) * (1 + i) - padding
+          const y = image.height - height * (1 + i) - padding
           ctx.lineWidth = 6
           ctx.strokeText(line, x, y)
           ctx.fillText(line, x, y)
