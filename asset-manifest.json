@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "https://acrossoverepisode.com/static/css/main.e83d502c.css",
-    "main.js": "https://acrossoverepisode.com/static/js/main.096d86ee.js",
-    "static/js/787.483897ca.chunk.js": "https://acrossoverepisode.com/static/js/787.483897ca.chunk.js",
-    "worker.js": "https://acrossoverepisode.com/e9195d32cec749c447ba.worker.js",
-    "index.html": "https://acrossoverepisode.com/index.html",
-    "main.e83d502c.css.map": "https://acrossoverepisode.com/static/css/main.e83d502c.css.map",
-    "main.096d86ee.js.map": "https://acrossoverepisode.com/static/js/main.096d86ee.js.map",
-    "787.483897ca.chunk.js.map": "https://acrossoverepisode.com/static/js/787.483897ca.chunk.js.map"
+    "main.css": "https://seppo0010.github.io/theonewiththething.com/static/css/main.e83d502c.css",
+    "main.js": "https://seppo0010.github.io/theonewiththething.com/static/js/main.d7e0ddd2.js",
+    "static/js/787.483897ca.chunk.js": "https://seppo0010.github.io/theonewiththething.com/static/js/787.483897ca.chunk.js",
+    "worker.js": "https://seppo0010.github.io/theonewiththething.com/469af056a9ac49bcc3c3.worker.js",
+    "index.html": "https://seppo0010.github.io/theonewiththething.com/index.html",
+    "main.e83d502c.css.map": "https://seppo0010.github.io/theonewiththething.com/static/css/main.e83d502c.css.map",
+    "main.d7e0ddd2.js.map": "https://seppo0010.github.io/theonewiththething.com/static/js/main.d7e0ddd2.js.map",
+    "787.483897ca.chunk.js.map": "https://seppo0010.github.io/theonewiththething.com/static/js/787.483897ca.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e83d502c.css",
-    "static/js/main.096d86ee.js"
+    "static/js/main.d7e0ddd2.js"
   ]
 }
