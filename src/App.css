@@ -16,7 +16,7 @@ body {
   max-width: 860px;
   margin: 0 auto;
   position: relative;
-  min-height: calc(100vh - 60px);
+  min-height: max(calc(100vh - 60px), 400px);
   padding-bottom: 40px;
 }
 
@@ -151,4 +151,19 @@ img.thumbnail {
 
 #selectedItem textarea {
   width: 100%;
+}
+
+footer {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+footer ul {
+  margin: 0 0 0 8px;
+  flex-grow: 1;
+}
+
+footer a {
+  background: white;
 }

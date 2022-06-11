@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import './App.css'
+import relatedSites from './related-sites.json'
 import striptags from 'striptags'
 import {
   HashRouter,
@@ -285,6 +286,8 @@ function WorkerTrigger ({
     workerInstance?.randomFrame()
   }
 
+  const sites = relatedSites.filter((site: {url: string}) => site.url.replace(/\/$/, '') !== (process.env.REACT_APP_PUBLIC_URL || '').replace(/\/$/, ''))
+
   return (<>
     <header>
       <h1>{process.env.REACT_APP_TITLE}</h1>
@@ -300,14 +303,23 @@ function WorkerTrigger ({
           setSearchCriteria('')
           setSelectedItem(null)
           searchInputRef.current?.focus()
-        }} aria-label="Clear" id="clear" className={searchCriteria === '' ? 'hidden' : ''}></button>
-      </label>
+        }} aria-label="Clear" id="clear" className={searchCriteria === '' ? 'hidden' : ''}></button> </label>
       <button onClick={fetchRandomFrame}>Random</button>
     </header>
     <main>
       <Outlet />
     </main>
     <footer>
+      {sites.length > 0
+        ? <>
+          <span>Related websites:</span>
+          <ul>
+            {sites.map((site: {url: string, title: string}) => (<li key={site.url}>
+              <a target="_blank" href={site.url} rel="noreferrer">{site.title}</a>
+            </li>))}
+          </ul>
+        </>
+        : ''}
       <a href="https://github.com/seppo0010/acrossoverepisode.com" target="_blank" rel="noreferrer">Fork me on GitHub</a>
     </footer>
   </>)
