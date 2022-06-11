@@ -47,6 +47,10 @@ Horseman, they wrote down something else by mistake, so "BoJack Horseman" is
 still up for grabs?
 ](https://acrossoverepisode-assets.storage.googleapis.com/copyright.png)
 
+[Some](https://www.eff.org/document/ruling-appeals-court)
+[interesting](https://www.copyright.gov/fair-use/summaries/fox-news-network-tveyes-02272018.pdf)
+[links](https://www.forbes.com/sites/propointgraphics/2016/04/30/animated-gifs-and-fair-use-what-is-and-isnt-legal-according-to-copyright-law/).
+
 
 ## How do I run this? Can I make my own?
 
