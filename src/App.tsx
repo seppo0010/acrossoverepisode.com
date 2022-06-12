@@ -8,7 +8,8 @@ import {
   useParams,
   Outlet,
   Routes,
-  Route
+  Route,
+  Link
 } from 'react-router-dom'
 
 // eslint-disable-next-line import/no-webpack-loader-syntax
@@ -36,7 +37,6 @@ function Main ({
   setCaption: (_: string) => void,
   setSelectedItem: (_: SearchResult) => void,
 }) {
-  const navigate = useNavigate()
   useEffect(() => {
     document.body.style.backgroundImage = searchResults.length > 0
       ? ''
@@ -59,17 +59,18 @@ function Main ({
       }</>
     }
     {ready && searchResults.length > 0 && <div>
-      {/* eslint-disable-next-line */}
       <ul aria-description="Search results">
         {searchResults.map((doc: SearchResult) => (<li key={doc.id} className="searchResult">
-          <button onClick={() => {
-            navigate(`/${encodeURIComponent(doc.season)}/${encodeURIComponent(doc.episode)}/${encodeURIComponent(doc.id)}`)
-            setSelectedItem(doc)
-            setCaption(striptags(doc.html))
-          }}>
+          <Link
+            to={`/${encodeURIComponent(doc.season)}/${encodeURIComponent(doc.episode)}/${encodeURIComponent(doc.id)}`}
+            onClick={() => {
+              setSelectedItem(doc)
+              setCaption(striptags(doc.html))
+            }}
+          >
             <img src={`${process.env.REACT_APP_ASSETS_URL}/${doc.season}x${('' + doc.episode).padStart(2, '0')}/${doc.id}_thumbnail.${process.env.REACT_APP_ASSETS_EXTENSION || 'png'}`} alt="" className="thumbnail" />
             <span>{striptags(doc.html)}</span>
-          </button>
+          </Link>
         </li>))}
       </ul>
     </div>}

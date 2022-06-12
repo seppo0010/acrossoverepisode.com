@@ -100,11 +100,18 @@ ul, ul li {
   margin: 0 auto;
 }
 
+.searchResult a {
+  display: block;
+  padding: 5px 10px;
+  background: #e9e9ed;
+}
+
 .searchResult span {
   position: absolute;
   color: yellow;
-  bottom: 10px;
+  bottom: 7px;
   width: 100%;
+  font-size: 13px;
   text-align: center;
   text-shadow:
     -1px -1px 0 #000,
@@ -122,6 +129,7 @@ ul, ul li {
 img.thumbnail {
   width: 180px;
   height: 101px;
+  display: block;
 }
 
 #selectedItem .back {
