@@ -21,7 +21,7 @@ const doSearch = () => {
   const results = index.search(criteria)
   const filtered = results.filter((tag, index, array) => array.findIndex((doc) => tag.id === doc.id) === index)
   global.self.postMessage(['setDidSearch', true])
-  global.self.postMessage(['setSearchResults', filtered.sort(() => Math.random() - 0.5).slice(0, 40)])
+  global.self.postMessage(['setSearchResults', filtered.slice(0, 40)])
 }
 
 export async function init () {
