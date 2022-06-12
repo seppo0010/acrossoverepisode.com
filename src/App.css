@@ -78,9 +78,20 @@ header button {
   height: 30px;
 }
 
-button {
+button,
+.button {
+  display: inline-block;
   border: none;
+  font-size: 14px;
   padding: 4px 10px;
+  background: #e9e9ed;
+  color: black;
+  text-decoration: none;
+}
+
+button:hover,
+.button:hover {
+  background: #d0d0d7;
 }
 
 ul {
@@ -100,16 +111,10 @@ ul, ul li {
   margin: 0 auto;
 }
 
-.searchResult a {
-  display: block;
-  padding: 5px 10px;
-  background: #e9e9ed;
-}
-
 .searchResult span {
   position: absolute;
   color: yellow;
-  bottom: 7px;
+  bottom: 10px;
   width: 100%;
   font-size: 13px;
   text-align: center;

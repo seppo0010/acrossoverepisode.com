@@ -63,6 +63,7 @@ function Main ({
         {searchResults.map((doc: SearchResult) => (<li key={doc.id} className="searchResult">
           <Link
             to={`/${encodeURIComponent(doc.season)}/${encodeURIComponent(doc.episode)}/${encodeURIComponent(doc.id)}`}
+            className="button"
             onClick={() => {
               setSelectedItem(doc)
               setCaption(striptags(doc.html))
@@ -97,7 +98,6 @@ function Frame ({
   workerInstance: typeof Worker
 }) {
   const { season, episode, id } = useParams()
-  const navigate = useNavigate()
   const [mosaicData, setMosaicData] = useState('')
   const clearMosaic = async () => {
     setMosaicData('')
@@ -207,10 +207,9 @@ function Frame ({
     return <>Loading...</>
   }
   return <div id="selectedItem">
-    <button onClick={() => {
-      navigate('/')
+    <Link to='/' onClick={() => {
       setSelectedItem(null)
-    }} className="back">Back to search</button>
+    }} className="button back">Back to search</Link>
     <canvas ref={canvasRef}></canvas>
     <img ref={imageRef} alt="" />
     <div id="frameNavigation">
