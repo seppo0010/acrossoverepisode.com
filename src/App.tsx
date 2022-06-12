@@ -83,7 +83,6 @@ function Frame ({
   setSelectedItem,
   next,
   previous,
-  ready,
   caption,
   setCaption,
   workerInstance
@@ -92,7 +91,6 @@ function Frame ({
   setSelectedItem: (_: null) => void,
   next: () => void,
   previous: () => void,
-  ready: boolean,
   caption: string,
   setCaption: (_: string) => void,
   workerInstance: typeof Worker
@@ -399,7 +397,6 @@ function App () {
               setSelectedItem={setSelectedItem}
               next={next}
               previous={previous}
-              ready={ready}
               />} />
             </Route>
         </Routes>
