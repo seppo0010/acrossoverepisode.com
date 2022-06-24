@@ -85,7 +85,8 @@ function Frame ({
   previous,
   caption,
   setCaption,
-  workerInstance
+  workerInstance,
+  ready
 }: {
   selectedItem: SearchResult | null,
   setSelectedItem: (_: null) => void,
@@ -93,7 +94,8 @@ function Frame ({
   previous: () => void,
   caption: string,
   setCaption: (_: string) => void,
-  workerInstance: typeof Worker
+  workerInstance: typeof Worker,
+  ready: boolean
 }) {
   const { season, episode, id } = useParams()
   const [mosaicData, setMosaicData] = useState('')
@@ -192,16 +194,18 @@ function Frame ({
     })()
   }, [getCurrentFrame])
 
-  if (
-    !selectedItem ||
+  const needsLoading = !selectedItem ||
     selectedItem.season !== parseInt(season || '', 10) ||
     selectedItem.episode !== parseInt(episode || '', 10) ||
-    selectedItem.id !== parseInt(id || '', 10)) {
-    workerInstance?.goToFrame(
-      parseInt(season || '', 10),
-      parseInt(episode || '', 10),
-      parseInt(id || '', 10)
-    )
+    selectedItem.id !== parseInt(id || '', 10)
+
+  useEffect(() => {
+    if (needsLoading && ready) {
+      workerInstance?.goToFrame(season, episode, id)
+    }
+  }, [needsLoading, ready, workerInstance, season, episode, id])
+
+  if (needsLoading) {
     return <>Loading...</>
   }
   return <div id="selectedItem">
@@ -397,6 +401,7 @@ function App () {
               setSelectedItem={setSelectedItem}
               next={next}
               previous={previous}
+              ready={ready}
               />} />
             </Route>
         </Routes>
