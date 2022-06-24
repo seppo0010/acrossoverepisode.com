@@ -58,7 +58,7 @@ function Main ({
       <ul aria-description="Search results">
         {searchResults.map((doc: SearchResult) => (<li key={doc.id} className="searchResult">
           <Link
-            to={`/${encodeURIComponent(doc.season)}/${encodeURIComponent(doc.episode)}/${encodeURIComponent(doc.id)}`}
+            to={framePath(doc)}
             className="button"
           >
             <img src={`${process.env.REACT_APP_ASSETS_URL}/${doc.season}x${('' + doc.episode).padStart(2, '0')}/${doc.id}_thumbnail.${process.env.REACT_APP_ASSETS_EXTENSION || 'png'}`} alt="" className="thumbnail" />
@@ -78,17 +78,17 @@ function Frame ({
   ready: boolean
 }) {
   const { season, episode, id } = useParams()
+  const navigate = useNavigate()
   const [frameData, setFrameData] = useState<SearchResult | null>(null)
   const [caption, setCaption] = useState('')
   const [mosaicData, setMosaicData] = useState('')
   const clearMosaic = async () => {
     setMosaicData('')
   }
-  const previous = () => {
-    workerInstance?.previousFrame(frameData!.season, frameData!.episode, frameData!.id)
-  }
-  const next = () => {
-    workerInstance?.nextFrame(frameData!.season, frameData!.episode, frameData!.id)
+  const goToRelativeFrame = async (delta: 1 | -1) => {
+    if (!frameData) return
+    const frame = await workerInstance?.loadFrame(frameData.season, frameData.episode, frameData.id, delta)
+    navigate(framePath(frame))
   }
 
   const addCurrentFrameToMosaic = async () => {
@@ -203,8 +203,8 @@ function Frame ({
     <canvas ref={canvasRef}></canvas>
     <img ref={imageRef} alt="" />
     <div id="frameNavigation">
-      <button onClick={previous}>Previous</button>
-      <button onClick={next}>Next</button>
+      <button onClick={() => goToRelativeFrame(-1)}>Previous</button>
+      <button onClick={() => goToRelativeFrame(1)}>Next</button>
     </div>
     <p>
       Season {frameData.season} / {' '}
@@ -248,10 +248,6 @@ function WorkerTrigger ({
       case 'setReady': setReady(params); break
       case 'setSearchResults': setSearchResults(params); break
       case 'setDidSearch': setDidSearch(params); break
-      case 'goToFrame': {
-        navigate(`/${encodeURIComponent(params.season)}/${encodeURIComponent(params.episode)}/${encodeURIComponent(params.id)}`)
-        break
-      }
       default: console.error('unexpected message type: ' + t); break
     }
   }
@@ -265,8 +261,9 @@ function WorkerTrigger ({
     workerInstance?.search(searchCriteria)
   }, [searchCriteria, workerInstance])
 
-  const fetchRandomFrame = () => {
-    workerInstance?.randomFrame()
+  const goToRandomFrame = async () => {
+    const frame = await workerInstance?.loadRandomFrame()
+    navigate(framePath(frame))
   }
 
   const sites = relatedSites.filter((site: {url: string}) => site.url.replace(/\/$/, '') !== (process.env.REACT_APP_PUBLIC_URL || '').replace(/\/$/, ''))
@@ -285,7 +282,7 @@ function WorkerTrigger ({
           setSearchCriteria('')
           searchInputRef.current?.focus()
         }} aria-label="Clear" id="clear" className={searchCriteria === '' ? 'hidden' : ''}></button> </label>
-      <button onClick={fetchRandomFrame}>Random</button>
+      <button onClick={goToRandomFrame}>Random</button>
     </header>
     <main>
       <Outlet />
@@ -305,6 +302,9 @@ function WorkerTrigger ({
     </footer>
   </>)
 }
+
+const framePath = (frame: SearchResult) =>
+  `/${encodeURIComponent(frame.season)}/${encodeURIComponent(frame.episode)}/${encodeURIComponent(frame.id)}`
 
 function App () {
   const [loading, setLoading] = useState(false)
