@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import './App.css'
 import relatedSites from './related-sites.json'
 import striptags from 'striptags'
@@ -26,16 +26,12 @@ function Main ({
   didSearch,
   searchResults,
   searchCriteria,
-  ready,
-  setCaption,
-  setSelectedItem
+  ready
 }: {
   didSearch: boolean,
   searchResults: SearchResult[],
   searchCriteria: string,
   ready: boolean,
-  setCaption: (_: string) => void,
-  setSelectedItem: (_: SearchResult) => void,
 }) {
   useEffect(() => {
     document.body.style.backgroundImage = searchResults.length > 0
@@ -64,10 +60,6 @@ function Main ({
           <Link
             to={`/${encodeURIComponent(doc.season)}/${encodeURIComponent(doc.episode)}/${encodeURIComponent(doc.id)}`}
             className="button"
-            onClick={() => {
-              setSelectedItem(doc)
-              setCaption(striptags(doc.html))
-            }}
           >
             <img src={`${process.env.REACT_APP_ASSETS_URL}/${doc.season}x${('' + doc.episode).padStart(2, '0')}/${doc.id}_thumbnail.${process.env.REACT_APP_ASSETS_EXTENSION || 'png'}`} alt="" className="thumbnail" />
             <span>{striptags(doc.html)}</span>
@@ -79,35 +71,31 @@ function Main ({
 }
 
 function Frame ({
-  selectedItem,
-  setSelectedItem,
-  next,
-  previous,
-  caption,
-  setCaption,
   workerInstance,
   ready
 }: {
-  selectedItem: SearchResult | null,
-  setSelectedItem: (_: null) => void,
-  next: () => void,
-  previous: () => void,
-  caption: string,
-  setCaption: (_: string) => void,
   workerInstance: typeof Worker,
   ready: boolean
 }) {
   const { season, episode, id } = useParams()
+  const [frameData, setFrameData] = useState<SearchResult | null>(null)
+  const [caption, setCaption] = useState('')
   const [mosaicData, setMosaicData] = useState('')
   const clearMosaic = async () => {
     setMosaicData('')
+  }
+  const previous = () => {
+    workerInstance?.previousFrame(frameData!.season, frameData!.episode, frameData!.id)
+  }
+  const next = () => {
+    workerInstance?.nextFrame(frameData!.season, frameData!.episode, frameData!.id)
   }
 
   const addCurrentFrameToMosaic = async () => {
     const currentFrame = await getCurrentFrame()
     if (!currentFrame) return
     const canvas = canvasRef.current as (HTMLCanvasElement | null)
-    if (!canvas || !selectedItem) return
+    if (!canvas || !frameData) return
     const ctx = canvas.getContext('2d')
     if (ctx) {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -134,7 +122,7 @@ function Frame ({
 
   const getCurrentFrame = useCallback((): Promise<string | undefined> => {
     const canvas = canvasRef.current as (HTMLCanvasElement | null)
-    if (!canvas || !selectedItem) return Promise.resolve(undefined)
+    if (!canvas || !frameData) return Promise.resolve(undefined)
     const ctx = canvas.getContext('2d')
     if (ctx) {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -144,7 +132,7 @@ function Frame ({
     const promise: Promise<string> = new Promise((resolve, reject) => {
       const image = new Image()
       image.crossOrigin = 'Anonymous'
-      image.src = `${process.env.REACT_APP_ASSETS_URL}/${selectedItem.season}x${('' + selectedItem.episode).padStart(2, '0')}/${selectedItem.id}_still.${process.env.REACT_APP_ASSETS_EXTENSION || 'png'}`
+      image.src = `${process.env.REACT_APP_ASSETS_URL}/${frameData.season}x${('' + frameData.episode).padStart(2, '0')}/${frameData.id}_still.${process.env.REACT_APP_ASSETS_EXTENSION || 'png'}`
       image.onload = function () {
         if (!ctx) return reject(new Error('no context'))
         let size = 48
@@ -184,7 +172,7 @@ function Frame ({
       }
     })
     return promise
-  }, [selectedItem, caption])
+  }, [frameData, caption])
 
   useEffect(() => {
     (async () => {
@@ -194,24 +182,24 @@ function Frame ({
     })()
   }, [getCurrentFrame])
 
-  const needsLoading = !selectedItem ||
-    selectedItem.season !== parseInt(season || '', 10) ||
-    selectedItem.episode !== parseInt(episode || '', 10) ||
-    selectedItem.id !== parseInt(id || '', 10)
-
   useEffect(() => {
-    if (needsLoading && ready) {
-      workerInstance?.goToFrame(season, episode, id)
+    if (!ready) return
+    if (!frameData ||
+      frameData.season !== parseInt(season || '', 10) ||
+      frameData.episode !== parseInt(episode || '', 10) ||
+      frameData.id !== parseInt(id || '', 10)) {
+      workerInstance?.loadFrame(season, episode, id).then((data: SearchResult) => {
+        setFrameData(data)
+        setCaption(striptags(data.html))
+      })
     }
-  }, [needsLoading, ready, workerInstance, season, episode, id])
+  }, [frameData, ready, workerInstance, season, episode, id])
 
-  if (needsLoading) {
+  if (!frameData) {
     return <>Loading...</>
   }
   return <div id="selectedItem">
-    <Link to='/' onClick={() => {
-      setSelectedItem(null)
-    }} className="button back">Back to search</Link>
+    <Link to='/' className="button back">Back to search</Link>
     <canvas ref={canvasRef}></canvas>
     <img ref={imageRef} alt="" />
     <div id="frameNavigation">
@@ -219,9 +207,9 @@ function Frame ({
       <button onClick={next}>Next</button>
     </div>
     <p>
-      Season {selectedItem.season} / {' '}
-      Episode {selectedItem.episode}{' '}
-      ({new Date(selectedItem.id).toISOString().substr(11, 8)})
+      Season {frameData.season} / {' '}
+      Episode {frameData.episode}{' '}
+      ({new Date(frameData.id).toISOString().substr(11, 8)})
     </p>
     <textarea value={caption} onChange={(event) => setCaption(event.target.value)} aria-label="Caption"></textarea>
     <button onClick={addCurrentFrameToMosaic}>Add to mosaic</button>
@@ -233,8 +221,6 @@ function Frame ({
 function WorkerTrigger ({
   searchCriteria,
   setSearchCriteria,
-  setCaption,
-  setSelectedItem,
   setDidSearch,
   setSearchResults,
   setReady,
@@ -242,8 +228,6 @@ function WorkerTrigger ({
 }: {
   searchCriteria: string,
   setSearchCriteria: (_: string) => void,
-  setCaption: (_: string) => void,
-  setSelectedItem: (_: SearchResult | null) => void,
   setDidSearch: (_: boolean) => void,
   setSearchResults: (_: SearchResult[]) => void,
   setReady: (_: boolean) => void,
@@ -252,10 +236,9 @@ function WorkerTrigger ({
   const navigate = useNavigate()
   const searchInputRef = useRef<HTMLInputElement | null>(null)
   const placeholders = (process.env.REACT_APP_PLACEHOLDER || '').split(',')
-  const getRandomPlaceholderIndex = () => {
+  const placeholderIndex = useMemo(() => {
     return Math.floor(Math.random() * placeholders.length)
-  }
-  const [placeholderIndex, setPlaceholderIndex] = useState(getRandomPlaceholderIndex)
+  }, [])
 
   const processMessage = ({ data }: any) => {
     // I don't know why `const [t, params] = data` does not work
@@ -265,12 +248,10 @@ function WorkerTrigger ({
       case 'setReady': setReady(params); break
       case 'setSearchResults': setSearchResults(params); break
       case 'setDidSearch': setDidSearch(params); break
-      case 'goToFrame':
-        setPlaceholderIndex(getRandomPlaceholderIndex())
+      case 'goToFrame': {
         navigate(`/${encodeURIComponent(params.season)}/${encodeURIComponent(params.episode)}/${encodeURIComponent(params.id)}`)
-        setSelectedItem(params)
-        setCaption(striptags(params.html))
         break
+      }
       default: console.error('unexpected message type: ' + t); break
     }
   }
@@ -298,12 +279,10 @@ function WorkerTrigger ({
         <input autoFocus={true} type="text" placeholder={placeholders[placeholderIndex]} value={searchCriteria} ref={searchInputRef} onChange={(event) => {
           navigate('/')
           setSearchCriteria(event.target.value)
-          setSelectedItem(null)
         }} />
         <button onClick={() => {
           navigate('/')
           setSearchCriteria('')
-          setSelectedItem(null)
           searchInputRef.current?.focus()
         }} aria-label="Clear" id="clear" className={searchCriteria === '' ? 'hidden' : ''}></button> </label>
       <button onClick={fetchRandomFrame}>Random</button>
@@ -333,8 +312,6 @@ function App () {
   const [workerInstance, setWorkerInstance] = useState<any | null>(null)
   const [searchCriteria, setSearchCriteria] = useState('')
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
-  const [selectedItem, setSelectedItem] = useState<SearchResult | null>(null)
-  const [caption, setCaption] = useState('')
   const [didSearch, setDidSearch] = useState(false)
   const [didLoadFont, setDidLoadFont] = useState(0)
 
@@ -363,13 +340,6 @@ function App () {
     workerInstance.init()
   }, [loading, workerInstance])
 
-  const previous = () => {
-    workerInstance?.previousFrame(selectedItem!.season, selectedItem!.episode, selectedItem!.id)
-  }
-  const next = () => {
-    workerInstance?.nextFrame(selectedItem!.season, selectedItem!.episode, selectedItem!.id)
-  }
-
   return (
     <div id="main" style={{ display: didLoadFont === 2 ? 'block' : 'none' }}>
       <HashRouter>
@@ -379,28 +349,18 @@ function App () {
               workerInstance={workerInstance}
               searchCriteria={searchCriteria}
               setSearchCriteria={setSearchCriteria}
-              setCaption={setCaption}
-              setSelectedItem={setSelectedItem}
               setDidSearch={setDidSearch}
               setSearchResults={setSearchResults}
               setReady={setReady}
               />}>
             <Route path="/" element={<Main
               searchResults={searchResults}
-              setCaption={setCaption}
-              setSelectedItem={setSelectedItem}
               didSearch={didSearch}
               searchCriteria={searchCriteria}
               ready={ready}
               />} />
             <Route path="/:season/:episode/:id" element={<Frame
               workerInstance={workerInstance}
-              selectedItem={selectedItem}
-              caption={caption}
-              setCaption={setCaption}
-              setSelectedItem={setSelectedItem}
-              next={next}
-              previous={previous}
               ready={ready}
               />} />
             </Route>

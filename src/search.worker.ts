@@ -72,16 +72,21 @@ export function randomFrame () {
   }])
 }
 
-export function goToFrame (season: string, episode: string, id: string, delta: number = 0) {
+export function loadFrame (season: string, episode: string, id: string, delta: number = 0) {
   if (!documentIds || !storedFields) return
   const currentFrame = `${season}:${episode}:${id}`
   const key = (parseInt(reverseIndex[currentFrame], 10) + delta) + ''
-  global.self.postMessage(['goToFrame', {
+  return {
     id: documentIds[key],
     episode: storedFields[key].episode,
     html: storedFields[key].html,
     season: storedFields[key].season
-  }])
+  }
+}
+
+function goToFrame (season: string, episode: string, id: string, delta: number = 0) {
+  if (!documentIds || !storedFields) return
+  global.self.postMessage(['goToFrame', loadFrame(season, episode, id, delta)])
 }
 
 export function nextFrame (season: string, episode: string, id: string) {
