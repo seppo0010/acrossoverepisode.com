@@ -55,7 +55,7 @@ export async function search (searchCriteria: string) {
   doSearch()
 }
 
-export function randomFrame () {
+export function loadRandomFrame () {
   if (!storedFields || !documentIds) {
     return
   }
@@ -64,30 +64,22 @@ export function randomFrame () {
   if (!storedFields[key]) {
     return
   }
-  global.self.postMessage(['goToFrame', {
+  return {
     id: documentIds[key],
     episode: storedFields[key].episode,
     html: storedFields[key].html,
     season: storedFields[key].season
-  }])
+  }
 }
 
-export function goToFrame (season: string, episode: string, id: string, delta: number = 0) {
+export function loadFrame (season: string, episode: string, id: string, delta: number = 0) {
   if (!documentIds || !storedFields) return
   const currentFrame = `${season}:${episode}:${id}`
   const key = (parseInt(reverseIndex[currentFrame], 10) + delta) + ''
-  global.self.postMessage(['goToFrame', {
+  return {
     id: documentIds[key],
     episode: storedFields[key].episode,
     html: storedFields[key].html,
     season: storedFields[key].season
-  }])
-}
-
-export function nextFrame (season: string, episode: string, id: string) {
-  return goToFrame(season, episode, id, 1)
-}
-
-export function previousFrame (season: string, episode: string, id: string) {
-  return goToFrame(season, episode, id, -1)
+  }
 }
