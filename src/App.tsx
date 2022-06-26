@@ -9,7 +9,8 @@ import {
   Outlet,
   Routes,
   Route,
-  Link
+  Link,
+  useLocation
 } from 'react-router-dom'
 
 // eslint-disable-next-line import/no-webpack-loader-syntax
@@ -72,10 +73,12 @@ function Main ({
 
 function Frame ({
   workerInstance,
-  ready
+  ready,
+  searchCriteria
 }: {
   workerInstance: typeof Worker,
-  ready: boolean
+  ready: boolean,
+  searchCriteria: string
 }) {
   const { season, episode, id } = useParams()
   const navigate = useNavigate()
@@ -199,7 +202,7 @@ function Frame ({
     return <>Loading...</>
   }
   return <div id="selectedItem">
-    <Link to='/' className="button back">Back to search</Link>
+    <Link to={{ pathname: '/', search: searchCriteria && new URLSearchParams({ s: searchCriteria }).toString() }} className="button back">Back to search</Link>
     <canvas ref={canvasRef}></canvas>
     <img ref={imageRef} alt="" />
     <div id="frameNavigation">
@@ -234,6 +237,7 @@ function WorkerTrigger ({
   workerInstance: typeof Worker
 }) {
   const navigate = useNavigate()
+  const location = useLocation()
   const searchInputRef = useRef<HTMLInputElement | null>(null)
   const placeholders = (process.env.REACT_APP_PLACEHOLDER || '').split(',')
   const placeholderIndex = useMemo(() => {
@@ -266,6 +270,14 @@ function WorkerTrigger ({
     navigate(framePath(frame))
   }
 
+  useEffect(() => {
+    if (!location.search) return
+    const s = new URLSearchParams(location.search).get('s')
+    if (s && s !== searchCriteria) {
+      setSearchCriteria(s)
+    }
+  }, [location.search])
+
   const sites = relatedSites.filter((site: {url: string}) => site.url.replace(/\/$/, '') !== (process.env.REACT_APP_PUBLIC_URL || '').replace(/\/$/, ''))
 
   return (<>
@@ -274,8 +286,13 @@ function WorkerTrigger ({
       <label>
         <span>Search</span>
         <input autoFocus={true} type="text" placeholder={placeholders[placeholderIndex]} value={searchCriteria} ref={searchInputRef} onChange={(event) => {
-          navigate('/')
-          setSearchCriteria(event.target.value)
+          const value = event.target.value
+          setSearchCriteria(value)
+          const searchLocation = {
+            pathname: '/',
+            search: value && new URLSearchParams({ s: value }).toString()
+          }
+          navigate(searchLocation, { replace: location.pathname === '/' })
         }} />
         <button onClick={() => {
           navigate('/')
@@ -362,6 +379,7 @@ function App () {
             <Route path="/:season/:episode/:id" element={<Frame
               workerInstance={workerInstance}
               ready={ready}
+              searchCriteria={searchCriteria}
               />} />
             </Route>
         </Routes>
