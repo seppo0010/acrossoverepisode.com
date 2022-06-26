@@ -73,10 +73,12 @@ function Main ({
 
 function Frame ({
   workerInstance,
-  ready
+  ready,
+  searchCriteria
 }: {
   workerInstance: typeof Worker,
-  ready: boolean
+  ready: boolean,
+  searchCriteria: string
 }) {
   const { season, episode, id } = useParams()
   const navigate = useNavigate()
@@ -200,7 +202,7 @@ function Frame ({
     return <>Loading...</>
   }
   return <div id="selectedItem">
-    <Link to='/' className="button back">Back to search</Link>
+    <Link to={{ pathname: '/', search: searchCriteria && new URLSearchParams({ s: searchCriteria }).toString() }} className="button back">Back to search</Link>
     <canvas ref={canvasRef}></canvas>
     <img ref={imageRef} alt="" />
     <div id="frameNavigation">
@@ -288,7 +290,7 @@ function WorkerTrigger ({
           setSearchCriteria(value)
           const searchLocation = {
             pathname: '/',
-            search: value ? new URLSearchParams({ s: value }).toString() : undefined
+            search: value && new URLSearchParams({ s: value }).toString()
           }
           navigate(searchLocation, { replace: location.pathname === '/' })
         }} />
@@ -377,6 +379,7 @@ function App () {
             <Route path="/:season/:episode/:id" element={<Frame
               workerInstance={workerInstance}
               ready={ready}
+              searchCriteria={searchCriteria}
               />} />
             </Route>
         </Routes>
