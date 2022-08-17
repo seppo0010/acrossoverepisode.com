@@ -42,5 +42,5 @@ jobs:
           branch: main
           clean: true
           folder: build
-          ssh-key: ${{ secrets.DEPLOY_KEY_FRIENDS }}
+          ssh-key: ${{ secrets.DEPLOY_KEY_HIMYM }}
           repository-name: seppo0010/axoe-himym
