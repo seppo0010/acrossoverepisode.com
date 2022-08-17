@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-deploy:
-    concurrency: ci-${{ github.ref }}-tww
+    concurrency: ci-${{ github.ref }}-tgp
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
