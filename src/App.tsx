@@ -131,7 +131,7 @@ function Frame ({
     const promise: Promise<string> = new Promise((resolve, reject) => {
       const image = new Image()
       image.crossOrigin = 'Anonymous'
-      image.src = `${process.env.REACT_APP_ASSETS_URL}/${currFrame.season}x${('' + currFrame.episode).padStart(2, '0')}/${currFrame.id}_still.${process.env.REACT_APP_ASSETS_EXTENSION || 'png'}`
+      image.src = imageUrl(currFrame)
       image.onload = function () {
         if (!ctx) return reject(new Error('no context'))
         let size = 48
@@ -216,6 +216,8 @@ function Frame ({
     <button onClick={addCurrentFrameToMosaic}>Add to mosaic</button>
     <button onClick={clearMosaic}>Clear mosaic</button>
     <img src={mosaicData} alt="" />
+    {prevFrame && <link rel="preload" href={imageUrl(prevFrame)} as="image" crossOrigin="" />}
+    {nextFrame && <link rel="preload" href={imageUrl(nextFrame)} as="image" crossOrigin="" />}
   </div>
 }
 
@@ -320,6 +322,9 @@ function WorkerTrigger ({
 
 const framePath = (frame: SearchResult) =>
   `/${encodeURIComponent(frame.season)}/${encodeURIComponent(frame.episode)}/${encodeURIComponent(frame.id)}`
+
+const imageUrl = (frame: SearchResult) =>
+  `${process.env.REACT_APP_ASSETS_URL}/${frame.season}x${('' + frame.episode).padStart(2, '0')}/${frame.id}_still.${process.env.REACT_APP_ASSETS_EXTENSION || 'png'}`
 
 function App () {
   const [loading, setLoading] = useState(false)
