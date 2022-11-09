@@ -89,6 +89,7 @@ function Frame ({
   const clearMosaic = async () => {
     setMosaicData('')
   }
+  useKeyboardNavigation()
 
   const addCurrentFrameToMosaic = async () => {
     const currentFrame = await getCurrentFrame()
@@ -204,8 +205,8 @@ function Frame ({
     <canvas ref={canvasRef}></canvas>
     <img ref={imageRef} alt="" />
     <div id="frameNavigation">
-      {prevFrame && <Link to={framePath(prevFrame)} className="button">Previous</Link>}
-      {nextFrame && <Link to={framePath(nextFrame)} className="button">Next</Link>}
+      {prevFrame && <Link to={framePath(prevFrame)} className="button" rel="prev">Previous</Link>}
+      {nextFrame && <Link to={framePath(nextFrame)} className="button" rel="next">Next</Link>}
     </div>
     <p>
       Season {currFrame.season} / {' '}
@@ -219,6 +220,29 @@ function Frame ({
     {prevFrame && <link rel="preload" href={imageUrl(prevFrame)} as="image" crossOrigin="" />}
     {nextFrame && <link rel="preload" href={imageUrl(nextFrame)} as="image" crossOrigin="" />}
   </div>
+}
+
+function useKeyboardNavigation () {
+  useEffect(() => {
+    const keyDownHandler = (event: KeyboardEvent) => {
+      if (document.activeElement?.matches('input, textarea')) return
+
+      switch (event.key) {
+        case 'ArrowLeft':
+        case 'j':
+          document.querySelector<HTMLAnchorElement>('a[rel=prev]')?.click()
+          break
+        case 'ArrowRight':
+        case 'k':
+          document.querySelector<HTMLAnchorElement>('a[rel=next]')?.click()
+          break
+      }
+    }
+    window.addEventListener('keydown', keyDownHandler)
+    return () => {
+      window.removeEventListener('keydown', keyDownHandler)
+    }
+  }, [])
 }
 
 function WorkerTrigger ({
