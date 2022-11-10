@@ -153,7 +153,11 @@ img.thumbnail {
   display: flex;
 }
 
-#selectedItem #frameNavigation button:nth-child(2) {
+#selectedItem #frameNavigation .button {
+  display: block;
+}
+
+#selectedItem #frameNavigation .button:nth-child(2) {
   margin-left: auto;
 }
 

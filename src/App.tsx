@@ -81,24 +81,21 @@ function Frame ({
   searchCriteria: string
 }) {
   const { season, episode, id } = useParams()
-  const navigate = useNavigate()
-  const [frameData, setFrameData] = useState<SearchResult | null>(null)
+  const [currFrame, setCurrFrame] = useState<SearchResult | null>(null)
+  const [prevFrame, setPrevFrame] = useState<SearchResult | null>(null)
+  const [nextFrame, setNextFrame] = useState<SearchResult | null>(null)
   const [caption, setCaption] = useState('')
   const [mosaicData, setMosaicData] = useState('')
   const clearMosaic = async () => {
     setMosaicData('')
   }
-  const goToRelativeFrame = async (delta: 1 | -1) => {
-    if (!frameData) return
-    const frame = await workerInstance?.loadFrame(frameData.season, frameData.episode, frameData.id, delta)
-    navigate(framePath(frame))
-  }
+  useKeyboardNavigation()
 
   const addCurrentFrameToMosaic = async () => {
     const currentFrame = await getCurrentFrame()
     if (!currentFrame) return
     const canvas = canvasRef.current as (HTMLCanvasElement | null)
-    if (!canvas || !frameData) return
+    if (!canvas || !currFrame) return
     const ctx = canvas.getContext('2d')
     if (ctx) {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -125,7 +122,7 @@ function Frame ({
 
   const getCurrentFrame = useCallback((): Promise<string | undefined> => {
     const canvas = canvasRef.current as (HTMLCanvasElement | null)
-    if (!canvas || !frameData) return Promise.resolve(undefined)
+    if (!canvas || !currFrame) return Promise.resolve(undefined)
     const ctx = canvas.getContext('2d')
     if (ctx) {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -135,7 +132,7 @@ function Frame ({
     const promise: Promise<string> = new Promise((resolve, reject) => {
       const image = new Image()
       image.crossOrigin = 'Anonymous'
-      image.src = `${process.env.REACT_APP_ASSETS_URL}/${frameData.season}x${('' + frameData.episode).padStart(2, '0')}/${frameData.id}_still.${process.env.REACT_APP_ASSETS_EXTENSION || 'png'}`
+      image.src = imageUrl(currFrame)
       image.onload = function () {
         if (!ctx) return reject(new Error('no context'))
         let size = 48
@@ -175,7 +172,7 @@ function Frame ({
       }
     })
     return promise
-  }, [frameData, caption])
+  }, [currFrame, caption])
 
   useEffect(() => {
     (async () => {
@@ -187,18 +184,20 @@ function Frame ({
 
   useEffect(() => {
     if (!ready) return
-    if (!frameData ||
-      frameData.season !== parseInt(season || '', 10) ||
-      frameData.episode !== parseInt(episode || '', 10) ||
-      frameData.id !== parseInt(id || '', 10)) {
+    if (!currFrame ||
+      currFrame.season !== parseInt(season || '', 10) ||
+      currFrame.episode !== parseInt(episode || '', 10) ||
+      currFrame.id !== parseInt(id || '', 10)) {
       workerInstance?.loadFrame(season, episode, id).then((data: SearchResult) => {
-        setFrameData(data)
+        setCurrFrame(data)
         setCaption(striptags(data.html))
       })
+      workerInstance?.loadFrame(season, episode, id, -1).then(setPrevFrame)
+      workerInstance?.loadFrame(season, episode, id, 1).then(setNextFrame)
     }
-  }, [frameData, ready, workerInstance, season, episode, id])
+  }, [currFrame, ready, workerInstance, season, episode, id])
 
-  if (!frameData) {
+  if (!currFrame) {
     return <>Loading...</>
   }
   return <div id="selectedItem">
@@ -206,19 +205,44 @@ function Frame ({
     <canvas ref={canvasRef}></canvas>
     <img ref={imageRef} alt="" />
     <div id="frameNavigation">
-      <button onClick={() => goToRelativeFrame(-1)}>Previous</button>
-      <button onClick={() => goToRelativeFrame(1)}>Next</button>
+      {prevFrame && <Link to={framePath(prevFrame)} className="button" rel="prev">Previous</Link>}
+      {nextFrame && <Link to={framePath(nextFrame)} className="button" rel="next">Next</Link>}
     </div>
     <p>
-      Season {frameData.season} / {' '}
-      Episode {frameData.episode}{' '}
-      ({new Date(frameData.id).toISOString().substr(11, 8)})
+      Season {currFrame.season} / {' '}
+      Episode {currFrame.episode}{' '}
+      ({new Date(currFrame.id).toISOString().substr(11, 8)})
     </p>
     <textarea value={caption} onChange={(event) => setCaption(event.target.value)} aria-label="Caption"></textarea>
     <button onClick={addCurrentFrameToMosaic}>Add to mosaic</button>
     <button onClick={clearMosaic}>Clear mosaic</button>
     <img src={mosaicData} alt="" />
+    {prevFrame && <link rel="preload" href={imageUrl(prevFrame)} as="image" crossOrigin="" />}
+    {nextFrame && <link rel="preload" href={imageUrl(nextFrame)} as="image" crossOrigin="" />}
   </div>
+}
+
+function useKeyboardNavigation () {
+  useEffect(() => {
+    const keyDownHandler = (event: KeyboardEvent) => {
+      if (document.activeElement?.matches('input, textarea')) return
+
+      switch (event.key) {
+        case 'ArrowLeft':
+        case 'j':
+          document.querySelector<HTMLAnchorElement>('a[rel=prev]')?.click()
+          break
+        case 'ArrowRight':
+        case 'k':
+          document.querySelector<HTMLAnchorElement>('a[rel=next]')?.click()
+          break
+      }
+    }
+    window.addEventListener('keydown', keyDownHandler)
+    return () => {
+      window.removeEventListener('keydown', keyDownHandler)
+    }
+  }, [])
 }
 
 function WorkerTrigger ({
@@ -322,6 +346,9 @@ function WorkerTrigger ({
 
 const framePath = (frame: SearchResult) =>
   `/${encodeURIComponent(frame.season)}/${encodeURIComponent(frame.episode)}/${encodeURIComponent(frame.id)}`
+
+const imageUrl = (frame: SearchResult) =>
+  `${process.env.REACT_APP_ASSETS_URL}/${frame.season}x${('' + frame.episode).padStart(2, '0')}/${frame.id}_still.${process.env.REACT_APP_ASSETS_EXTENSION || 'png'}`
 
 function App () {
   const [loading, setLoading] = useState(false)
